@@ -220,14 +220,15 @@ const InstagramMosaic = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 0.2em;
   margin-top: 0.5em;
-  max-height: 80px;
+  max-height: 200px;
   overflow: hidden;
 
   &:after {
     content: "";
     position: absolute;
     width: 100%;
-    height: 80px;
+    height: 100px;
+    top: 100px;
     background: linear-gradient(transparent, white);
   }
 `;
