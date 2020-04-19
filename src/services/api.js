@@ -1,7 +1,7 @@
 import apisauce from "apisauce";
 import { getUser } from "./auth";
 
-const baseURL = "http://localhost:3333";
+const baseURL = "https://links-money-server.herokuapp.com";
 
 const api = apisauce.create({ baseURL });
 
