@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { login } from "../services/auth";
+import api from "../services/api";
 
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
@@ -17,8 +18,11 @@ function Page({ history }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    login(formState);
-    history.push("/");
+    api.post("sessions", formState).then((response) => {
+      login(response.data);
+
+      history.push("/");
+    });
   };
 
   return (
