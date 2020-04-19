@@ -1,31 +1,18 @@
 import React from "react";
 import styled from "styled-components";
-import api from "../services/fake_api";
+import api from "../services/api";
 import { FaEdit, FaExternalLinkAlt } from "react-icons/fa";
-import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
+import * as FontAwesomeIcon from "react-icons/fa";
 
 import Shell from "../components/Shell";
-
-function InstagramLayout({ data }) {
-  return (
-    <InstagramMosaic>
-      {data.map((item) => (
-        <SquareMosaicButton key={item.id} image={item.thumbnail} />
-      ))}
-    </InstagramMosaic>
-  );
-}
 
 function Page({ history }) {
   const [pages, setPages] = React.useState([]);
 
   const fetchData = () => {
-    setPages([
-      { ...api.forbesbr, id: 1 },
-      { ...api.forbesbr, id: 2 },
-      { ...api.forbesbr, id: 3 },
-      { ...api.forbesbr, id: 4 },
-    ]);
+    api.get("pages").then((response) => {
+      setPages(response.data);
+    });
   };
 
   const openLink = (id) => {
@@ -34,6 +21,10 @@ function Page({ history }) {
 
   const handleEdit = (id) => {
     history.push(`/pages/${id}/edit`);
+  };
+
+  const handleNewPage = () => {
+    history.push(`/pages/new`);
   };
 
   React.useEffect(fetchData, []);
@@ -50,34 +41,73 @@ function Page({ history }) {
             </CardHeader>
 
             <SocialButtonCarousel>
-              {page.socialButtons.map((item) => (
-                <SocialButton key={item.id}>
-                  <SocialButtonIconWrapper
-                    background={item.gradient || item.color}
-                  >
-                    <Icon icon={item.icon} />
-                  </SocialButtonIconWrapper>
-                  <SocialButtonLabel>{item.label}</SocialButtonLabel>
-                </SocialButton>
-              ))}
+              {page.socialButtons.map((item) => {
+                const Icon = FontAwesomeIcon[item.icon];
+
+                return (
+                  <SocialButton key={item.id}>
+                    <SocialButtonIconWrapper
+                      background={item.gradient || item.color}
+                    >
+                      <Icon />
+                    </SocialButtonIconWrapper>
+                    <SocialButtonLabel>{item.label}</SocialButtonLabel>
+                  </SocialButton>
+                );
+              })}
             </SocialButtonCarousel>
 
-            <InstagramLayout data={page.mosaic} />
+            <InstagramMosaic>
+              {page.links
+                .filter((link) => link.type === "instagram")
+                .map((item) => (
+                  <SquareMosaicButton key={item.id} image={item.thumbnail} />
+                ))}
+            </InstagramMosaic>
 
             <CardActions>
-              <CardAction>
+              <CardAction onClick={() => handleEdit(page.id)}>
                 <FaEdit color="#333" size={18} /> Editar
               </CardAction>
-              <CardAction onClick={() => openLink("forbesbr")}>
+              <CardAction onClick={() => openLink(page.id)}>
                 <FaExternalLinkAlt color="#333" size={18} /> Visualizar
               </CardAction>
             </CardActions>
           </Card>
         ))}
+
+        <NewPageButton onClick={handleNewPage}>
+          <FontAwesomeIcon.FaPlus /> Criar nova página
+        </NewPageButton>
       </Container>
     </Shell>
   );
 }
+
+const NewPageButton = styled.button`
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #3a3a3a;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  svg {
+    font-size: 3em;
+    margin-bottom: 0.5em;
+    color: #666;
+  }
+
+  &:hover {
+    background-color: #eee;
+  }
+`;
 
 const Container = styled.div`
   display: grid;
@@ -202,15 +232,6 @@ const SocialButtonLabel = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   padding-top: 0.5em;
-`;
-
-const HelpText = styled.p`
-  border: 1px solid #dbdbdb;
-  border-width: 1px 0;
-  line-height: 2.5;
-  text-align: center;
-  font-size: 0.9em;
-  margin: 0.75em 0 1em;
 `;
 
 const InstagramMosaic = styled.div`
