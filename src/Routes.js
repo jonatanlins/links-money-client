@@ -5,6 +5,7 @@ import { isAuthenticated } from "./services/auth";
 import Login from "./pages/Login";
 import Overview from "./pages/Overview";
 import EditPage from "./pages/EditPage";
+import CreatePage from "./pages/CreatePage";
 
 function PrivateRoute({ component: Component, ...args }) {
   return (
@@ -29,6 +30,8 @@ function Routes() {
       <Route path="/login" exact component={Login} />
 
       <PrivateRoute path="/" exact component={Overview} />
+
+      <PrivateRoute path="/pages/new" exact component={CreatePage} />
       <PrivateRoute path="/pages/:id/edit" exact component={EditPage} />
 
       <Redirect path="*" to="/" />

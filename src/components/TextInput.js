@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { css } from "styled-components";
 
-function TextInput({ label, value = "", ...props }) {
+function TextInput({ label, value = "", multiline, ...props }) {
   const [isFocused, setFocused] = React.useState(false);
 
   const handleFocus = (event) => {
@@ -22,12 +22,21 @@ function TextInput({ label, value = "", ...props }) {
     <Container>
       {label && <Label isHidden={value || isFocused}>{label}</Label>}
 
-      <Input
-        {...props}
-        value={value}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
+      {multiline ? (
+        <TextArea
+          {...props}
+          value={value}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+      ) : (
+        <Input
+          {...props}
+          value={value}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+      )}
     </Container>
   );
 }
@@ -59,11 +68,23 @@ const Label = styled.span`
 const Input = styled.input`
   border: 1px solid #ccc;
   border-radius: 8px;
-  line-height: 56px;
+  line-height: 1.618;
   font-size: 1em;
   width: 100%;
   color: #333;
-  padding: 0 14px;
+  padding: 14px;
+  outline: none;
+  box-sizing: border-box;
+`;
+
+const TextArea = styled.textarea`
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  line-height: 1.618;
+  font-size: 1em;
+  width: 100%;
+  color: #333;
+  padding: 14px;
   outline: none;
   box-sizing: border-box;
 `;

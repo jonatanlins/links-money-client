@@ -1,19 +1,23 @@
 import React from "react";
 import styled from "styled-components";
 import { FiChevronDown, FiBell } from "react-icons/fi";
+import { getUser } from "../services/auth";
+import { Link } from "react-router-dom";
 
 function Shell({ children }) {
+  const { user } = React.useMemo(getUser, []);
+
   return (
     <Container>
       <Header>
-        <Title>LinksMoney</Title>
+        <Title to="/">LinksMoney</Title>
 
         <HeaderButton>
           <FiBell size={18} />
         </HeaderButton>
 
         <HeaderButton>
-          Jonatan Lins
+          {user.name}
           <FiChevronDown size={18} />
         </HeaderButton>
       </Header>
@@ -34,13 +38,14 @@ const Header = styled.header`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
-const Title = styled.h2`
+const Title = styled(Link)`
   color: white;
   flex: 1;
   font-size: 1.5em;
   font-weight: bold;
   margin: 0 1em;
   line-height: 64px;
+  text-decoration: none;
 `;
 
 const HeaderButton = styled.button`
