@@ -14,6 +14,10 @@ function Page({ history, match }) {
     window.open(`https://linksmoney.netlify.com/${id}`, "_blank");
   };
 
+  const handleNewSocialButton = () => {
+    history.push(`/pages/${match.params.id}/socialButton/new`);
+  };
+
   const handleSave = () => {
     // history.push(`/pages/${id}/edit`);
   };
@@ -46,7 +50,7 @@ function Page({ history, match }) {
           </Header>
 
           <SocialButtonCarousel>
-            <SocialButton>
+            <SocialButton onClick={handleNewSocialButton}>
               <SocialButtonIconWrapper background="#ccc">
                 <FontAwesomeIcon.FaPlus />
               </SocialButtonIconWrapper>
