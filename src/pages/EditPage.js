@@ -5,7 +5,6 @@ import { FaEdit, FaExternalLinkAlt } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
 
 import Shell from "../components/Shell";
-import Button from "../components/Button";
 
 function Page({ history, match }) {
   const [pageData, setPageData] = React.useState(null);
@@ -15,7 +14,11 @@ function Page({ history, match }) {
   };
 
   const handleNewSocialButton = () => {
-    history.push(`/pages/${match.params.id}/socialButton/new`);
+    history.push(`/pages/${match.params.id}/socialButtons/new`);
+  };
+
+  const handleNewLink = () => {
+    history.push(`/pages/${match.params.id}/links/new`);
   };
 
   const handleSave = () => {
@@ -74,7 +77,7 @@ function Page({ history, match }) {
           </SocialButtonCarousel>
 
           <InstagramMosaic>
-            <AddLinkButton>
+            <AddLinkButton onClick={handleNewLink}>
               <FontAwesomeIcon.FaPlus />
               Adicionar Link
             </AddLinkButton>

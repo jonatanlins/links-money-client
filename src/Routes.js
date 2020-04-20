@@ -7,6 +7,7 @@ import Overview from "./pages/Overview";
 import EditPage from "./pages/EditPage";
 import CreatePage from "./pages/CreatePage";
 import CreateSocialButton from "./pages/CreateSocialButton";
+import CreateLink from "./pages/CreateLink";
 
 function PrivateRoute({ component: Component, ...args }) {
   return (
@@ -35,10 +36,11 @@ function Routes() {
       <PrivateRoute path="/pages/new" exact component={CreatePage} />
       <PrivateRoute path="/pages/:id/edit" exact component={EditPage} />
       <PrivateRoute
-        path="/pages/:id/socialButton/new"
+        path="/pages/:id/socialButtons/new"
         exact
         component={CreateSocialButton}
       />
+      <PrivateRoute path="/pages/:id/links/new" exact component={CreateLink} />
 
       <Redirect path="*" to="/" />
     </Switch>
