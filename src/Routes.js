@@ -8,6 +8,8 @@ import EditPage from "./pages/EditPage";
 import CreatePage from "./pages/CreatePage";
 import CreateSocialButton from "./pages/CreateSocialButton";
 import CreateLink from "./pages/CreateLink";
+import PageListPage from "./pages/PageList";
+import MosaicPage from "./pages/Mosaic";
 
 function PrivateRoute({ component: Component, ...args }) {
   return (
@@ -41,6 +43,8 @@ function Routes() {
         component={CreateSocialButton}
       /> */}
       <PrivateRoute path="/pages/:id/links/new" exact component={CreateLink} />
+      <Route path="/pagelist" exact component={PageListPage} />
+      <Route path="/:id" exact component={MosaicPage} />
 
       <Redirect path="*" to="/" />
     </Switch>

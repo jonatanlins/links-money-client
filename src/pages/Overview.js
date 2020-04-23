@@ -16,7 +16,7 @@ function Page({ history }) {
   };
 
   const openLink = (id) => {
-    window.open(`https://linksmoney.netlify.com/${id}`, "_blank");
+    history.push(`/${id}`);
   };
 
   const handleEdit = (id) => {

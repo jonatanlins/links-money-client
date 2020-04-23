@@ -10,7 +10,7 @@ function Page({ history, match }) {
   const [pageData, setPageData] = React.useState(null);
 
   const openLink = (id) => {
-    window.open(`https://linksmoney.netlify.com/${id}`, "_blank");
+    history.push(`/${id}`);
   };
 
   const handleNewSocialButton = () => {
