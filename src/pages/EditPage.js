@@ -3,6 +3,7 @@ import styled from "styled-components";
 import api from "../services/api";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
+import axios from "axios";
 
 import Shell from "../components/Shell";
 
@@ -21,9 +22,36 @@ function Page({ history, match }) {
     history.push(`/pages/${match.params.id}/links/new`);
   };
 
+  const openExternalLink = (url) => {
+    if (url) {
+      window.open(url, "_blank");
+    }
+  };
+
   const fetchData = () => {
-    api.get(`pages/${match.params.id}`).then((response) => {
+    const instagramId = match.params.id;
+    api.get(`pages/${instagramId}`).then((response) => {
       setPageData(response.data);
+
+      axios
+        .get(`https://www.instagram.com/${instagramId}/?__a=1`)
+        .then((response) => {
+          const timeline = response.data.graphql.user.edge_owner_to_timeline_media.edges.map(
+            (item) => item.node
+          );
+
+          setPageData((pageData) => ({
+            ...pageData,
+            timeline: timeline.map((post) => {
+              return {
+                thumbnail: post.thumbnail_src,
+                id: post.id,
+                link: pageData.links.find((link) => link.social_id === post.id)
+                  ?.link,
+              };
+            }),
+          }));
+        });
     });
   };
 
@@ -75,11 +103,13 @@ function Page({ history, match }) {
               Adicionar Link
             </AddLinkButton>
 
-            {pageData.links
-              .filter((link) => link.type === "instagram")
-              .map((item) => (
-                <SquareMosaicButton key={item.id} image={item.thumbnail} />
-              ))}
+            {pageData?.timeline?.map((item) => (
+              <SquareMosaicButton
+                key={item.id}
+                image={item.thumbnail}
+                onClick={() => openExternalLink(item.link)}
+              />
+            ))}
           </InstagramMosaic>
         </Container>
       )}
