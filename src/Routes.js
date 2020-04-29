@@ -37,11 +37,11 @@ function Routes() {
 
       <PrivateRoute path="/pages/new" exact component={CreatePage} />
       <PrivateRoute path="/pages/:id/edit" exact component={EditPage} />
-      {/* <PrivateRoute
+      <PrivateRoute
         path="/pages/:id/socialButtons/new"
         exact
         component={CreateSocialButton}
-      /> */}
+      />
       <PrivateRoute path="/pages/:id/links/new" exact component={CreateLink} />
       <Route path="/pagelist" exact component={PageListPage} />
       <Route path="/:id" exact component={MosaicPage} />
