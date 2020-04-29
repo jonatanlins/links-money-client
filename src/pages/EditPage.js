@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import api from "../services/api";
-import { FaEdit, FaExternalLinkAlt } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
 
 import Shell from "../components/Shell";
@@ -19,10 +19,6 @@ function Page({ history, match }) {
 
   const handleNewLink = () => {
     history.push(`/pages/${match.params.id}/links/new`);
-  };
-
-  const handleSave = () => {
-    // history.push(`/pages/${id}/edit`);
   };
 
   const fetchData = () => {
@@ -43,9 +39,6 @@ function Page({ history, match }) {
             <Description>{pageData.description}</Description>
 
             <HeaderAtions>
-              <HeaderAction onClick={() => handleSave(pageData.id)}>
-                <FaEdit color="#333" size={18} /> Editar
-              </HeaderAction>
               <HeaderAction onClick={() => openLink(pageData.id)}>
                 <FaExternalLinkAlt color="#333" size={18} /> Visualizar
               </HeaderAction>
