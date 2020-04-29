@@ -90,8 +90,10 @@ function Page({ history }) {
             </SocialButtonCarousel>
 
             <InstagramMosaic>
-              {page.timeline?.map((item) => (
-                <SquareMosaicButton key={item.id} image={item.thumbnail} />
+              {page.timeline?.map((post) => (
+                <SquareMosaicButton key={post.id} image={post.thumbnail}>
+                  {post.link && <FontAwesomeIcon.FaLink />}
+                </SquareMosaicButton>
               ))}
             </InstagramMosaic>
 
@@ -292,6 +294,15 @@ const SquareMosaicButton = styled.button`
   border: none;
   display: block;
   outline: none;
+  position: relative;
+
+  svg {
+    color: white;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    font-size: 20px;
+  }
 `;
 
 export default Page;

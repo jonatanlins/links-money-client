@@ -1,8 +1,12 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-function SquareMosaicButton({ image, onClick }) {
-  return <StyledButton img={image} onClick={onClick} />;
+function SquareMosaicButton({ image, onClick, children }) {
+  return (
+    <StyledButton img={image} onClick={onClick}>
+      {children}
+    </StyledButton>
+  );
 }
 
 const StyledButton = styled.button`
@@ -15,6 +19,15 @@ const StyledButton = styled.button`
   outline: none;
   margin: 0;
   box-sizing: border-box;
+  position: relative;
+
+  svg {
+    color: white;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    font-size: 20px;
+  }
 `;
 
 export default SquareMosaicButton;

@@ -87,7 +87,9 @@ function Page({ match }) {
                 key={post.id}
                 image={post.thumbnail}
                 onClick={() => handleLink(post.link)}
-              />
+              >
+                {post.link && <FontAwesomeIcon.FaLink />}
+              </InstagramMosaicButton>
             ))}
           </InstagramMosaic>
         </>

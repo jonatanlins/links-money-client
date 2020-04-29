@@ -103,12 +103,14 @@ function Page({ history, match }) {
               Adicionar Link
             </AddLinkButton>
 
-            {pageData?.timeline?.map((item) => (
+            {pageData?.timeline?.map((post) => (
               <SquareMosaicButton
-                key={item.id}
-                image={item.thumbnail}
-                onClick={() => openExternalLink(item.link)}
-              />
+                key={post.id}
+                image={post.thumbnail}
+                onClick={() => openExternalLink(post.link)}
+              >
+                {post.link && <FontAwesomeIcon.FaLink />}
+              </SquareMosaicButton>
             ))}
           </InstagramMosaic>
         </Container>
@@ -282,6 +284,15 @@ const SquareMosaicButton = styled.button`
   display: block;
   outline: none;
   cursor: pointer;
+  position: relative;
+
+  svg {
+    color: white;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    font-size: 20px;
+  }
 `;
 
 export default Page;
