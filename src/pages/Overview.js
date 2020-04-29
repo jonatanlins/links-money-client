@@ -3,6 +3,7 @@ import styled from "styled-components";
 import api from "../services/api";
 import { FaEdit, FaExternalLinkAlt } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
+import axios from "axios";
 
 import Shell from "../components/Shell";
 
@@ -12,6 +13,38 @@ function Page({ history }) {
   const fetchData = () => {
     api.get("pages").then((response) => {
       setPages(response.data);
+
+      response.data.forEach((page) => {
+        axios
+          .get(`https://www.instagram.com/${page.id}/?__a=1`)
+          .then((response) => {
+            const timeline = response.data.graphql.user.edge_owner_to_timeline_media.edges.map(
+              (item) => item.node
+            );
+            const instagramId = page.id;
+
+            setPages((pages) =>
+              pages.map((page) => {
+                if (page.id === instagramId) {
+                  return {
+                    ...page,
+                    timeline: timeline.map((post) => {
+                      return {
+                        thumbnail: post.thumbnail_src,
+                        id: post.id,
+                        link: page.links.find(
+                          (link) => link.social_id === post.id
+                        )?.link,
+                      };
+                    }),
+                  };
+                } else {
+                  return page;
+                }
+              })
+            );
+          });
+      });
     });
   };
 
@@ -39,7 +72,6 @@ function Page({ history }) {
               <CardTitle>{page.name}</CardTitle>
               <CardDescription>{page.description}</CardDescription>
             </CardHeader>
-
             <SocialButtonCarousel>
               {page.socialButtons.map((item) => {
                 const Icon = FontAwesomeIcon[item.icon];
@@ -58,11 +90,9 @@ function Page({ history }) {
             </SocialButtonCarousel>
 
             <InstagramMosaic>
-              {page.links
-                .filter((link) => link.type === "instagram")
-                .map((item) => (
-                  <SquareMosaicButton key={item.id} image={item.thumbnail} />
-                ))}
+              {page.timeline?.map((item) => (
+                <SquareMosaicButton key={item.id} image={item.thumbnail} />
+              ))}
             </InstagramMosaic>
 
             <CardActions>
