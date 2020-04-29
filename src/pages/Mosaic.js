@@ -4,7 +4,6 @@ import styled, { css } from "styled-components";
 import * as FontAwesomeIcon from "react-icons/fa";
 import InstagramMosaicButton from "../components/InstagramMosaicButton";
 import YoutubeMosaicButton from "../components/YoutubeMosaicButton";
-import { CarouselProvider, Slider, Slide } from "pure-react-carousel";
 import axios from "axios";
 
 function Page({ match }) {
