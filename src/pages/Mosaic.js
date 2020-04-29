@@ -5,9 +5,10 @@ import * as FontAwesomeIcon from "react-icons/fa";
 import InstagramMosaicButton from "../components/InstagramMosaicButton";
 import YoutubeMosaicButton from "../components/YoutubeMosaicButton";
 import { CarouselProvider, Slider, Slide } from "pure-react-carousel";
+import axios from "axios";
 
 function Page({ match }) {
-  const [pageData, setpageData] = React.useState(null);
+  const [pageData, setPageData] = React.useState(null);
   const [layout, setLayout] = React.useState("instagram");
 
   const handleSocialButton = (buttonData) => () => {
@@ -24,7 +25,27 @@ function Page({ match }) {
 
   const fetchData = () => {
     api.get(`/pages/${match.params.id}`).then((response) => {
-      setpageData(response.data);
+      setPageData(response.data);
+
+      axios
+        .get(`https://www.instagram.com/${match.params.id}/?__a=1`)
+        .then((response) => {
+          const timeline = response.data.graphql.user.edge_owner_to_timeline_media.edges.map(
+            (item) => item.node
+          );
+
+          setPageData((pageData) => ({
+            ...pageData,
+            timeline: timeline.map((post) => {
+              return {
+                thumbnail: post.thumbnail_src,
+                id: post.id,
+                link: pageData.links.find((link) => link.social_id === post.id)
+                  ?.link,
+              };
+            }),
+          }));
+        });
     });
   };
 
@@ -81,15 +102,13 @@ function Page({ match }) {
             <HelpText>Toque em alguma imagem para ver mais</HelpText>
 
             <InstagramMosaic>
-              {pageData.links
-                .filter((link) => link.type === "instagram")
-                .map((item) => (
-                  <InstagramMosaicButton
-                    key={item.id}
-                    image={item.thumbnail}
-                    onClick={() => handleLink(item.link)}
-                  />
-                ))}
+              {pageData.timeline?.map((post) => (
+                <InstagramMosaicButton
+                  key={post.id}
+                  image={post.thumbnail}
+                  onClick={() => handleLink(post.link)}
+                />
+              ))}
             </InstagramMosaic>
           </Slide>
         </Slider>
