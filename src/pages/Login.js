@@ -18,11 +18,20 @@ function Page({ history }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    api.post("sessions", formState).then((response) => {
-      login(response.data);
+    api
+      .post("sessions", formState)
+      .then((response) => {
+        if (response.status === 401) {
+          alert("Usuário ou senha incorretos, tente novamente");
+        } else {
+          login(response.data);
 
-      history.push("/");
-    });
+          history.push("/");
+        }
+      })
+      .catch((error) => {
+        alert("Ocorreu um erro ao fazer login, tente novamente");
+      });
   };
 
   return (
