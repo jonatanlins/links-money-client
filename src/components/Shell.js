@@ -7,8 +7,6 @@ import { Link } from "react-router-dom";
 function Shell({ children }) {
   const { user } = React.useMemo(getUser, []);
 
-  console.log(getUser());
-
   return (
     <Container>
       <Header>
