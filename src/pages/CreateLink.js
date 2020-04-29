@@ -12,6 +12,7 @@ import TextInput from "../components/TextInput";
 function Page({ history, match }) {
   const [formState, setFormState] = React.useState({});
   const [instagramPosts, setInstagramPosts] = React.useState([]);
+  const [selectedPost, setSelectedPost] = React.useState(null);
 
   const handleInputChange = (field) => (event) => {
     const { value } = event.target;
@@ -25,29 +26,34 @@ function Page({ history, match }) {
         const timeline =
           response.data.graphql.user.edge_owner_to_timeline_media;
         const posts = timeline.edges.map((item) => item.node);
-        console.log(posts);
+
         setInstagramPosts(posts);
       });
-  };
-
-  const handleSelectThumbnail = (thumbnail) => {
-    setFormState((state) => ({ ...state, thumbnail }));
   };
 
   const handleSave = (event) => {
     event.preventDefault();
 
+    if (!selectedPost) {
+      alert("Selecione um link para continuar");
+      return;
+    }
+
     const linkData = {
       page_id: match.params.id,
-      thumbnail: formState.thumbnail,
+      social_id: selectedPost.id,
       link: formState.link,
       type: "instagram",
     };
 
     api.post("links", linkData).then((response) => {
-      alert("Link criado com sucesso!");
+      if (response.status < 400) {
+        alert("Link criado com sucesso!");
 
-      history.push(`/pages/${match.params.id}/edit`);
+        history.push(`/pages/${match.params.id}/edit`);
+      } else {
+        alert("Ocorreu um erro, por favor tente novamente");
+      }
     });
   };
 
@@ -57,7 +63,7 @@ function Page({ history, match }) {
     <Shell>
       <Container>
         <Form onSubmit={handleSave}>
-          <Thumbnail src={formState.thumbnail} />
+          <Thumbnail src={selectedPost?.thumbnail_src} />
 
           <TextInput
             label="Link do Botão"
@@ -70,15 +76,11 @@ function Page({ history, match }) {
         </Form>
 
         <InstagramMosaic>
-          <UploadThumbnailButton>
-            <FaUpload /> Fazer upload
-          </UploadThumbnailButton>
-
-          {instagramPosts.map((item) => (
+          {instagramPosts.map((post) => (
             <SquareMosaicButton
-              key={item.id}
-              image={item.thumbnail_src}
-              onClick={() => handleSelectThumbnail(item.thumbnail_src)}
+              key={post.id}
+              image={post.thumbnail_src}
+              onClick={() => setSelectedPost(post)}
             />
           ))}
         </InstagramMosaic>
@@ -125,29 +127,6 @@ const Form = styled.form`
 const Thumbnail = styled.img`
   max-width: 24em;
   align-self: center;
-`;
-
-const UploadThumbnailButton = styled.button`
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 1em;
-  color: #3a3a3a;
-  background-color: "#ddd";
-  transition: background-color 0.2s;
-
-  svg {
-    font-size: 2.5em;
-    margin-bottom: 0.3em;
-    color: #666;
-  }
-
-  &:hover {
-    background-color: #ccc;
-  }
 `;
 
 export default Page;
