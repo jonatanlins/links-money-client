@@ -20,7 +20,9 @@ function Page({ match }) {
   };
 
   const handleLink = (link) => {
-    window.location.href = link;
+    if (link) {
+      window.location.href = link;
+    }
   };
 
   const fetchData = () => {
@@ -76,43 +78,39 @@ function Page({ match }) {
         })}
       </SocialButtonCarousel>
 
-      <CarouselProvider
-        naturalSlideWidth={100}
-        naturalSlideHeight={100}
-        totalSlides={2}
-      >
-        <Slider>
-          <Slide index={0}>
-            <HelpText>Toque em algum link para ver mais</HelpText>
+      {layout === "instagram" && (
+        <>
+          <HelpText>Toque em alguma imagem para ver mais</HelpText>
 
-            <YoutubeMosaic>
-              {pageData.links
-                .filter((link) => link.type === "youtube")
-                .map((item) => (
-                  <YoutubeMosaicButton
-                    key={item.etag}
-                    data={item.snippet}
-                    onClick={() => handleLink(item.link)}
-                  />
-                ))}
-            </YoutubeMosaic>
-          </Slide>
+          <InstagramMosaic>
+            {pageData.timeline?.map((post) => (
+              <InstagramMosaicButton
+                key={post.id}
+                image={post.thumbnail}
+                onClick={() => handleLink(post.link)}
+              />
+            ))}
+          </InstagramMosaic>
+        </>
+      )}
 
-          <Slide index={1}>
-            <HelpText>Toque em alguma imagem para ver mais</HelpText>
+      {layout === "youtube" && (
+        <>
+          <HelpText>Toque em algum link para ver mais</HelpText>
 
-            <InstagramMosaic>
-              {pageData.timeline?.map((post) => (
-                <InstagramMosaicButton
-                  key={post.id}
-                  image={post.thumbnail}
-                  onClick={() => handleLink(post.link)}
+          <YoutubeMosaic>
+            {pageData.links
+              .filter((link) => link.type === "youtube")
+              .map((item) => (
+                <YoutubeMosaicButton
+                  key={item.etag}
+                  data={item.snippet}
+                  onClick={() => handleLink(item.link)}
                 />
               ))}
-            </InstagramMosaic>
-          </Slide>
-        </Slider>
-      </CarouselProvider>
+          </YoutubeMosaic>
+        </>
+      )}
     </Container>
   );
 }
