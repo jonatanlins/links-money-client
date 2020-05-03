@@ -1,8 +1,14 @@
 import React from "react";
 import Routes from "./Routes";
+import GlobalStyle from "./styles/GlobalStyle.js";
 
 function App() {
-  return <Routes />;
+  return (
+    <>
+      <GlobalStyle />
+      <Routes />
+    </>
+  );
 }
 
 export default App;
