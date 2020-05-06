@@ -1,31 +1,63 @@
 import React from "react";
 import styled from "styled-components";
 import api from "../services/api";
-import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaExternalLinkAlt, FaTimes } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
 import axios from "axios";
 
 import Shell from "../components/Shell";
+import TextInput from "../components/TextInput";
+import Button from "../components/Button";
 
 function Page({ history, match }) {
   const [pageData, setPageData] = React.useState(null);
+  const [linkPopup, setLinkPopup] = React.useState(null);
+  const [formState, setFormState] = React.useState({});
 
   const openLink = (id) => {
     history.push(`/${id}`);
+  };
+
+  const handleInputChange = (field) => (event) => {
+    const { value } = event.target;
+    setFormState((state) => ({ ...state, [field]: value }));
+  };
+
+  const handleSaveLink = (event) => {
+    event.preventDefault();
+
+    if (!linkPopup) {
+      return;
+    }
+
+    const linkData = {
+      page_id: match.params.id,
+      social_id: linkPopup.id,
+      link: formState.link,
+      type: "instagram",
+    };
+
+    api.post("links", linkData).then((response) => {
+      if (response.status < 400) {
+        alert("Link criado com sucesso!");
+
+        setLinkPopup(null);
+        fetchData();
+      } else {
+        alert("Ocorreu um erro, por favor tente novamente");
+
+        setLinkPopup(null);
+      }
+    });
   };
 
   const handleNewSocialButton = () => {
     history.push(`/pages/${match.params.id}/socialButtons/new`);
   };
 
-  const handleNewLink = () => {
-    history.push(`/pages/${match.params.id}/links/new`);
-  };
-
-  const openExternalLink = (url) => {
-    if (url) {
-      window.open(url, "_blank");
-    }
+  const handleEditLink = (post) => {
+    setFormState((state) => ({ ...state, link: post.link || "" }));
+    setLinkPopup(post);
   };
 
   const fetchData = () => {
@@ -78,7 +110,7 @@ function Page({ history, match }) {
               <SocialButtonIconWrapper background="#ccc">
                 <FontAwesomeIcon.FaPlus />
               </SocialButtonIconWrapper>
-              <SocialButtonLabel>Novo botão</SocialButtonLabel>
+              <SocialButtonLabel>Novo link</SocialButtonLabel>
             </SocialButton>
 
             {pageData.socialButtons.map((item) => {
@@ -98,21 +130,39 @@ function Page({ history, match }) {
           </SocialButtonCarousel>
 
           <InstagramMosaic>
-            <AddLinkButton onClick={handleNewLink}>
-              <FontAwesomeIcon.FaPlus />
-              Adicionar Link
-            </AddLinkButton>
-
             {pageData?.timeline?.map((post) => (
               <SquareMosaicButton
                 key={post.id}
                 image={post.thumbnail}
-                onClick={() => openExternalLink(post.link)}
+                onClick={() => handleEditLink(post)}
               >
                 {post.link && <FontAwesomeIcon.FaLink />}
               </SquareMosaicButton>
             ))}
           </InstagramMosaic>
+
+          {linkPopup && (
+            <LinkPopupOverlay>
+              <LinkPopup>
+                <LinkPopupCloseButton onClick={() => setLinkPopup(null)}>
+                  <FaTimes />
+                </LinkPopupCloseButton>
+
+                <img src={linkPopup.thumbnail} width="200" />
+
+                <form onSubmit={handleSaveLink}>
+                  <TextInput
+                    label="Link"
+                    value={formState.link}
+                    onChange={handleInputChange("link")}
+                    required
+                  />
+
+                  <Button>Salvar</Button>
+                </form>
+              </LinkPopup>
+            </LinkPopupOverlay>
+          )}
         </Container>
       )}
     </Shell>
@@ -121,26 +171,46 @@ function Page({ history, match }) {
 
 const Container = styled.div``;
 
-const AddLinkButton = styled.button`
+const LinkPopupOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+`;
+
+const LinkPopup = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 30em;
+  height: 30em;
+  margin: auto;
+  background-color: white;
+  border-radius: 1em;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  padding: 1em;
+  box-sizing: border-box;
+`;
+
+const LinkPopupCloseButton = styled.button`
   border: none;
+  background-color: transparent;
+  font-size: 1.4em;
+  position: absolute;
+  right: 3px;
+  top: 3px;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 1em;
-  color: #3a3a3a;
-  background-color: "#ddd";
-  transition: background-color 0.2s;
+  padding: 0;
+  width: 1.4em;
+  height: 1.4em;
 
   svg {
-    font-size: 2.5em;
-    margin-bottom: 0.3em;
-    color: #666;
-  }
-
-  &:hover {
-    background-color: #ccc;
+    margin-top: 4px;
+    color: #222;
   }
 `;
 
