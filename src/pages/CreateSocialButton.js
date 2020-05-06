@@ -42,6 +42,30 @@ const preDefinedButtons = [
     icon: "FaTwitch",
     color: "#6441A5",
   },
+  {
+    id: "mystore",
+    label: "Minha Loja",
+    icon: "FaStoreAlt",
+    color: "#27ae60",
+  },
+  {
+    id: "mylist",
+    label: "Catálogo",
+    icon: "FaList",
+    color: "#2980b9",
+  },
+  {
+    id: "mypayment",
+    label: "Pagamento",
+    icon: "FaMoneyBillWaveAlt",
+    color: "#8e44ad",
+  },
+  {
+    id: "myapp",
+    label: "Aplicativo",
+    icon: "FaMobileAlt",
+    color: "#e67e22",
+  },
 ];
 
 function Page({ history, match }) {
@@ -85,18 +109,20 @@ function Page({ history, match }) {
       <Container>
         <form onSubmit={handleSave}>
           <TextInput
-            label="Título do Botão"
+            label="Título"
             value={formState.label}
             onChange={handleInputChange("label")}
             required
           />
 
           <TextInput
-            label="Link do Botão"
+            label="Link"
             value={formState.link}
             onChange={handleInputChange("link")}
             required
           />
+
+          <h3>Estilo</h3>
 
           <SocialButtonCarousel>
             {preDefinedButtons.map((button) => {
@@ -120,7 +146,7 @@ function Page({ history, match }) {
             })}
           </SocialButtonCarousel>
 
-          <Button>Criar botão</Button>
+          <Button>Criar link</Button>
         </form>
       </Container>
     </Shell>
