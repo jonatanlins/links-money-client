@@ -7,20 +7,29 @@ import Overview from "./pages/Overview";
 import EditPage from "./pages/EditPage";
 import CreatePage from "./pages/CreatePage";
 import CreateSocialButton from "./pages/CreateSocialButton";
-import CreateLink from "./pages/CreateLink";
 import PageListPage from "./pages/PageList";
 import MosaicPage from "./pages/Mosaic";
+import LandingPage from "./pages/LandingPage";
 
-function PrivateRoute({ component: Component, ...args }) {
+function PrivateRoute({
+  component: Component,
+  unauthenticated: Unauthenticated,
+  ...args
+}) {
   return (
     <Route
       {...args}
       render={(props) =>
         isAuthenticated() ? (
           <Component {...props} />
+        ) : Unauthenticated ? (
+          <Unauthenticated {...props} />
         ) : (
           <Redirect
-            to={{ pathname: "/login", state: { from: props.location } }}
+            to={{
+              pathname: "/login",
+              state: { from: props.location },
+            }}
           />
         )
       }
@@ -33,7 +42,12 @@ function Routes() {
     <Switch>
       <Route path="/login" exact component={Login} />
 
-      <PrivateRoute path="/" exact component={Overview} />
+      <PrivateRoute
+        path="/"
+        exact
+        component={Overview}
+        unauthenticated={LandingPage}
+      />
 
       <PrivateRoute path="/pages/new" exact component={CreatePage} />
       <PrivateRoute path="/pages/:id/edit" exact component={EditPage} />
@@ -42,7 +56,6 @@ function Routes() {
         exact
         component={CreateSocialButton}
       />
-      <PrivateRoute path="/pages/:id/links/new" exact component={CreateLink} />
       <Route path="/pagelist" exact component={PageListPage} />
       <Route path="/:id" exact component={MosaicPage} />
 
