@@ -4,20 +4,42 @@ import { Link } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 
 function Page() {
+  const references = {
+    firstSection: React.useRef(),
+    resoursesSection: React.useRef(),
+    pricesSection: React.useRef(),
+  };
+
+  const scrollToRef = (ref) => {
+    window.scrollTo(0, references?.[ref]?.current?.offsetTop);
+  };
+
   return (
     <Container>
       <Header>
-        <TitleButton to="/">LinksMoney</TitleButton>
+        <TitleButton to="/" onClick={() => scrollToRef("firstSection")}>
+          LinksMoney
+        </TitleButton>
 
         <nav>
-          <HeaderButton to="#kk">Preços</HeaderButton>
-          <HeaderButton to="#kk">Recursos</HeaderButton>
+          <HeaderButton
+            to="#resources"
+            onClick={() => scrollToRef("resoursesSection")}
+          >
+            Recursos
+          </HeaderButton>
+          <HeaderButton
+            to="#prices"
+            onClick={() => scrollToRef("pricesSection")}
+          >
+            Preços
+          </HeaderButton>
           <HeaderButton to="/login">Entre</HeaderButton>
           <MainHeaderButton to="/login">Cadastre-se</MainHeaderButton>
         </nav>
       </Header>
 
-      <FirstSection>
+      <FirstSection ref={references.firstSection}>
         <div className="illustration">
           <Image src="https://via.placeholder.com/500x500" />
         </div>
@@ -28,7 +50,7 @@ function Page() {
         </div>
       </FirstSection>
 
-      <Section>
+      <Section ref={references.resoursesSection}>
         <H3 id="kk">Título da seção</H3>
         <H4>Subtítulo da seção</H4>
 
@@ -66,7 +88,7 @@ function Page() {
         </Grid>
       </Section>
 
-      <Section>
+      <Section ref={references.pricesSection}>
         <H3>Título da seção</H3>
         <H4>Subtítulo da seção</H4>
 
