@@ -1,11 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import { FiChevronDown, FiBell } from "react-icons/fi";
-import { getUser } from "../services/auth";
-import { Link } from "react-router-dom";
+import { getUser, logout } from "../services/auth";
+import { Link, useHistory } from "react-router-dom";
 
 function Shell({ children }) {
   const { user } = React.useMemo(getUser, []);
+  const history = useHistory();
+
+  function handleSignOut() {
+    logout();
+    history.push("/");
+  }
 
   return (
     <Container>
@@ -16,7 +22,7 @@ function Shell({ children }) {
           <FiBell size={18} />
         </HeaderButton>
 
-        <HeaderButton>
+        <HeaderButton onClick={handleSignOut}>
           {user.name}
           <FiChevronDown size={18} />
         </HeaderButton>
