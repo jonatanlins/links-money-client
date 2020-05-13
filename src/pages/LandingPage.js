@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
+import { isAuthenticated } from "../services/auth";
 
 function Page() {
   const references = {
@@ -34,8 +35,19 @@ function Page() {
           >
             Preços
           </HeaderButton>
-          <HeaderButton to="/p/signin">Entre</HeaderButton>
-          <MainHeaderButton to="/p/signup">Cadastre-se</MainHeaderButton>
+
+          {isAuthenticated() ? (
+            <>
+              <MainHeaderButton to="/p">
+                Vá para o painel de controle
+              </MainHeaderButton>
+            </>
+          ) : (
+            <>
+              <HeaderButton to="/p/signin">Entre</HeaderButton>
+              <MainHeaderButton to="/p/signup">Cadastre-se</MainHeaderButton>
+            </>
+          )}
         </nav>
       </Header>
 
