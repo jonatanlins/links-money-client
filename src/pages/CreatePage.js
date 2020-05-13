@@ -27,7 +27,7 @@ function Page({ history }) {
       if (response.status < 400) {
         alert("Página criada com sucesso!");
 
-        history.push(`/pages/${response.data.id}/edit`);
+        history.push(`/p/pages/${response.data.id}/edit`);
       } else {
         alert("Ocorreu um erro, tente novamente");
       }

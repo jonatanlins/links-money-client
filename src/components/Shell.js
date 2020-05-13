@@ -16,7 +16,7 @@ function Shell({ children }) {
   return (
     <Container>
       <Header>
-        <Title to="/">LinksMoney</Title>
+        <Title to="/p">LinksMoney</Title>
 
         <HeaderButton>
           <FiBell size={18} />

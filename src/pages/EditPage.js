@@ -52,7 +52,7 @@ function Page({ history, match }) {
   };
 
   const handleNewSocialButton = () => {
-    history.push(`/pages/${match.params.id}/socialButtons/new`);
+    history.push(`/p/pages/${match.params.id}/socialButtons/new`);
   };
 
   const handleEditLink = (post) => {

@@ -53,11 +53,11 @@ function Page({ history }) {
   };
 
   const handleEdit = (id) => {
-    history.push(`/pages/${id}/edit`);
+    history.push(`/p/pages/${id}/edit`);
   };
 
   const handleNewPage = () => {
-    history.push(`/pages/new`);
+    history.push(`/p/pages/new`);
   };
 
   React.useEffect(fetchData, []);

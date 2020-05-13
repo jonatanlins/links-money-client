@@ -100,7 +100,7 @@ function Page({ history, match }) {
     api.post("social-buttons", data).then((response) => {
       alert("Botão criado com sucesso!");
 
-      history.push(`/pages/${match.params.id}/edit`);
+      history.push(`/p/pages/${match.params.id}/edit`);
     });
   };
 
