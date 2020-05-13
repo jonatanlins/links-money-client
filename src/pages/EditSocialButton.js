@@ -70,6 +70,7 @@ const preDefinedButtons = [
 
 function Page({ history, match }) {
   const [formState, { text }] = useFormState();
+  const SelectedIcon = FontAwesomeIcon?.[formState.values.icon];
 
   const handleButtonSelection = (button) => {
     formState.setField("gradient", button.gradient);
@@ -82,6 +83,7 @@ function Page({ history, match }) {
 
     const { icon, color, label, link, gradient } = formState.values;
     const page_id = match.params.id;
+    const buttonId = match.params.buttonId;
 
     if (!icon) {
       alert("Selecione um ícone para continuar");
@@ -94,20 +96,30 @@ function Page({ history, match }) {
 
     const data = { icon, color, label, link, gradient, page_id };
 
-    api.post("social-buttons", data).then((response) => {
-      alert("Link criado com sucesso!");
+    api.put(`social-buttons/${buttonId}`, data).then((response) => {
+      alert("Link editado com sucesso!");
 
       history.push(`/p/pages/${match.params.id}/edit`);
     });
   };
 
-  const SelectedIcon = FontAwesomeIcon?.[formState.values.icon];
+  function fetchButton() {
+    api.get(`social-buttons/${match.params.buttonId}`).then((response) => {
+      formState.setField("icon", response.data.icon);
+      formState.setField("color", response.data.color);
+      formState.setField("label", response.data.label);
+      formState.setField("link", response.data.link);
+      formState.setField("gradient", response.data.gradient);
+    });
+  }
+
+  React.useEffect(fetchButton, []);
 
   return (
     <Overlay>
       <Container>
         <form onSubmit={handleSave}>
-          <h2>Adicionar link</h2>
+          <h2>Editar link</h2>
 
           <h3>Ícone</h3>
           <SocialButtonCarousel>

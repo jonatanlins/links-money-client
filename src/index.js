@@ -6,7 +6,6 @@ import { BrowserRouter } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "pure-react-carousel/dist/react-carousel.es.css";
-import "./styles/globalStyle.css";
 
 dayjs.extend(relativeTime);
 

@@ -3,9 +3,14 @@ import styled from "styled-components";
 import api from "../services/api";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
+import { Switch, Route } from "react-router-dom";
 import axios from "axios";
 
 import Shell from "../components/Shell";
+
+import CreateSocialButtonPage from "./CreateSocialButton";
+import EditSocialButtonPage from "./EditSocialButton";
+import EditPostLinkPage from "./EditPostLink";
 
 function Page({ history, match }) {
   const [pageData, setPageData] = React.useState(null);
@@ -15,18 +20,16 @@ function Page({ history, match }) {
   };
 
   const handleNewSocialButton = () => {
-    history.push(`/pages/${match.params.id}/socialButtons/new`);
+    history.push(`/p/pages/${match.params.id}/socialButtons/new`);
   };
 
-  const handleNewLink = () => {
-    history.push(`/pages/${match.params.id}/links/new`);
+  const handleEditLink = (post) => {
+    history.push(`/p/pages/${match.params.id}/postlinks/${post.id}`);
   };
 
-  const openExternalLink = (url) => {
-    if (url) {
-      window.open(url, "_blank");
-    }
-  };
+  function handleEditSocialButton(button) {
+    history.push(`/p/pages/${match.params.id}/socialButtons/${button.id}`);
+  }
 
   const fetchData = () => {
     const instagramId = match.params.id;
@@ -58,91 +61,86 @@ function Page({ history, match }) {
   React.useEffect(fetchData, []);
 
   return (
-    <Shell>
-      {pageData && (
-        <Container>
-          <Header>
-            <Avatar src={pageData.avatar} alt="" />
-            <Title>{pageData.name}</Title>
-            <Description>{pageData.description}</Description>
+    <>
+      <Shell>
+        {pageData && (
+          <Container>
+            <Header>
+              <Avatar src={pageData.avatar} alt="" />
+              <Title>{pageData.name}</Title>
+              <Description>{pageData.description}</Description>
 
-            <HeaderAtions>
-              <HeaderAction onClick={() => openLink(pageData.id)}>
-                <FaExternalLinkAlt color="#333" size={18} /> Visualizar
-              </HeaderAction>
-            </HeaderAtions>
-          </Header>
+              <HeaderAtions>
+                <HeaderAction onClick={() => openLink(pageData.id)}>
+                  <FaExternalLinkAlt color="#333" size={18} /> Visualizar
+                </HeaderAction>
+              </HeaderAtions>
+            </Header>
 
-          <SocialButtonCarousel>
-            <SocialButton onClick={handleNewSocialButton}>
-              <SocialButtonIconWrapper background="#ccc">
-                <FontAwesomeIcon.FaPlus />
-              </SocialButtonIconWrapper>
-              <SocialButtonLabel>Novo botão</SocialButtonLabel>
-            </SocialButton>
+            <SocialButtonCarousel>
+              <SocialButton onClick={handleNewSocialButton}>
+                <SocialButtonIconWrapper background="#ccc">
+                  <FontAwesomeIcon.FaPlus />
+                </SocialButtonIconWrapper>
+                <SocialButtonLabel>Novo link</SocialButtonLabel>
+              </SocialButton>
 
-            {pageData.socialButtons.map((item) => {
-              const Icon = FontAwesomeIcon[item.icon];
+              {pageData.socialButtons.map((button) => {
+                const Icon = FontAwesomeIcon[button.icon];
 
-              return (
-                <SocialButton key={item.id}>
-                  <SocialButtonIconWrapper
-                    background={item.gradient || item.color}
+                return (
+                  <SocialButton
+                    key={button.id}
+                    onClick={() => handleEditSocialButton(button)}
                   >
-                    <Icon />
-                  </SocialButtonIconWrapper>
-                  <SocialButtonLabel>{item.label}</SocialButtonLabel>
-                </SocialButton>
-              );
-            })}
-          </SocialButtonCarousel>
+                    <SocialButtonIconWrapper
+                      background={button.gradient || button.color}
+                    >
+                      <Icon />
+                    </SocialButtonIconWrapper>
+                    <SocialButtonLabel>{button.label}</SocialButtonLabel>
+                  </SocialButton>
+                );
+              })}
+            </SocialButtonCarousel>
 
-          <InstagramMosaic>
-            <AddLinkButton onClick={handleNewLink}>
-              <FontAwesomeIcon.FaPlus />
-              Adicionar Link
-            </AddLinkButton>
+            <InstagramMosaic>
+              {pageData?.timeline?.map((post) => (
+                <SquareMosaicButton
+                  key={post.id}
+                  image={post.thumbnail}
+                  onClick={() => handleEditLink(post)}
+                >
+                  {post.link && <FontAwesomeIcon.FaLink />}
+                </SquareMosaicButton>
+              ))}
+            </InstagramMosaic>
+          </Container>
+        )}
+      </Shell>
 
-            {pageData?.timeline?.map((post) => (
-              <SquareMosaicButton
-                key={post.id}
-                image={post.thumbnail}
-                onClick={() => openExternalLink(post.link)}
-              >
-                {post.link && <FontAwesomeIcon.FaLink />}
-              </SquareMosaicButton>
-            ))}
-          </InstagramMosaic>
-        </Container>
-      )}
-    </Shell>
+      <Switch>
+        <Route
+          path="/p/pages/:id/socialButtons/new"
+          exact
+          component={CreateSocialButtonPage}
+        />
+        <Route
+          path="/p/pages/:id/socialButtons/:buttonId"
+          exact
+          component={EditSocialButtonPage}
+        />
+        <Route
+          path="/p/pages/:id/postlinks/:postId"
+          exact
+          component={EditPostLinkPage}
+        />
+      </Switch>
+    </>
   );
 }
 
 const Container = styled.div``;
-
-const AddLinkButton = styled.button`
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 1em;
-  color: #3a3a3a;
-  background-color: "#ddd";
-  transition: background-color 0.2s;
-
-  svg {
-    font-size: 2.5em;
-    margin-bottom: 0.3em;
-    color: #666;
-  }
-
-  &:hover {
-    background-color: #ccc;
-  }
-`;
 
 const Header = styled.header`
   display: grid;

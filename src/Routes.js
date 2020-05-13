@@ -3,24 +3,32 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { isAuthenticated } from "./services/auth";
 
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Overview from "./pages/Overview";
-import EditPage from "./pages/EditPage";
+import ViewPage from "./pages/ViewPage";
 import CreatePage from "./pages/CreatePage";
-import CreateSocialButton from "./pages/CreateSocialButton";
-import CreateLink from "./pages/CreateLink";
-import PageListPage from "./pages/PageList";
 import MosaicPage from "./pages/Mosaic";
+import LandingPage from "./pages/LandingPage";
 
-function PrivateRoute({ component: Component, ...args }) {
+function PrivateRoute({
+  component: Component,
+  unauthenticated: Unauthenticated,
+  ...args
+}) {
   return (
     <Route
       {...args}
       render={(props) =>
         isAuthenticated() ? (
           <Component {...props} />
+        ) : Unauthenticated ? (
+          <Unauthenticated {...props} />
         ) : (
           <Redirect
-            to={{ pathname: "/login", state: { from: props.location } }}
+            to={{
+              pathname: "/p/signin",
+              state: { from: props.location },
+            }}
           />
         )
       }
@@ -28,23 +36,28 @@ function PrivateRoute({ component: Component, ...args }) {
   );
 }
 
+function ControlPanel() {
+  return (
+    <Switch>
+      <Route path="/p" exact component={Overview} />
+      <Route path="/p/newPage" exact component={Overview} />
+      <Route path="/p/pages/:id" component={ViewPage} />
+
+      <Redirect path="*" to="/p" />
+    </Switch>
+  );
+}
+
 function Routes() {
   return (
     <Switch>
-      <Route path="/login" exact component={Login} />
+      <Route path="/" exact component={LandingPage} />
 
-      <PrivateRoute path="/" exact component={Overview} />
+      <Route path="/p/signin" component={Login} />
+      <Route path="/p/signup" component={Register} />
+      <PrivateRoute path="/p" component={ControlPanel} />
 
-      <PrivateRoute path="/pages/new" exact component={CreatePage} />
-      <PrivateRoute path="/pages/:id/edit" exact component={EditPage} />
-      <PrivateRoute
-        path="/pages/:id/socialButtons/new"
-        exact
-        component={CreateSocialButton}
-      />
-      <PrivateRoute path="/pages/:id/links/new" exact component={CreateLink} />
-      <Route path="/pagelist" exact component={PageListPage} />
-      <Route path="/:id" exact component={MosaicPage} />
+      <Route path="/:id" component={MosaicPage} />
 
       <Redirect path="*" to="/" />
     </Switch>

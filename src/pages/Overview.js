@@ -4,8 +4,10 @@ import api from "../services/api";
 import { FaEdit, FaExternalLinkAlt } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
 import axios from "axios";
+import { Switch, Route } from "react-router-dom";
 
 import Shell from "../components/Shell";
+import CreatePagePage from "../pages/CreatePage";
 
 function Page({ history }) {
   const [pages, setPages] = React.useState([]);
@@ -52,67 +54,75 @@ function Page({ history }) {
     history.push(`/${id}`);
   };
 
-  const handleEdit = (id) => {
-    history.push(`/pages/${id}/edit`);
+  const handleViewPage = (id) => {
+    history.push(`/p/pages/${id}`);
   };
 
   const handleNewPage = () => {
-    history.push(`/pages/new`);
+    history.push(`/p/newPage`);
   };
 
   React.useEffect(fetchData, []);
 
   return (
-    <Shell>
-      <Container>
-        {pages.map((page) => (
-          <Card key={page.id}>
-            <CardHeader>
-              <Avatar src={page.avatar} alt="" />
-              <CardTitle>{page.name}</CardTitle>
-              <CardDescription>{page.description}</CardDescription>
-            </CardHeader>
-            <SocialButtonCarousel>
-              {page.socialButtons.map((item) => {
-                const Icon = FontAwesomeIcon[item.icon];
+    <>
+      <Shell>
+        <Container>
+          {pages.map((page) => (
+            <Card key={page.id}>
+              <CardHeader>
+                <Avatar src={page.avatar} alt="" />
+                <CardTitle>{page.name}</CardTitle>
+                <CardDescription>{page.description}</CardDescription>
+              </CardHeader>
+              <SocialButtonCarousel>
+                {page.socialButtons.map((item) => {
+                  const Icon = FontAwesomeIcon[item.icon];
 
-                return (
-                  <SocialButton key={item.id}>
-                    <SocialButtonIconWrapper
-                      background={item.gradient || item.color}
-                    >
-                      <Icon />
-                    </SocialButtonIconWrapper>
-                    <SocialButtonLabel>{item.label}</SocialButtonLabel>
-                  </SocialButton>
-                );
-              })}
-            </SocialButtonCarousel>
+                  return (
+                    <SocialButton key={item.id}>
+                      <SocialButtonIconWrapper
+                        background={item.gradient || item.color}
+                      >
+                        <Icon />
+                      </SocialButtonIconWrapper>
+                      <SocialButtonLabel>{item.label}</SocialButtonLabel>
+                    </SocialButton>
+                  );
+                })}
+              </SocialButtonCarousel>
 
-            <InstagramMosaic>
-              {page.timeline?.map((post) => (
-                <SquareMosaicButton key={post.id} image={post.thumbnail}>
-                  {post.link && <FontAwesomeIcon.FaLink />}
-                </SquareMosaicButton>
-              ))}
-            </InstagramMosaic>
+              <InstagramMosaicWrapper>
+                <InstagramMosaic>
+                  {page.timeline?.map((post) => (
+                    <SquareMosaicButton key={post.id} image={post.thumbnail}>
+                      {post.link && <FontAwesomeIcon.FaLink />}
+                    </SquareMosaicButton>
+                  ))}
+                </InstagramMosaic>
+              </InstagramMosaicWrapper>
 
-            <CardActions>
-              <CardAction onClick={() => handleEdit(page.id)}>
-                <FaEdit color="#333" size={18} /> Editar
-              </CardAction>
-              <CardAction onClick={() => openLink(page.id)}>
-                <FaExternalLinkAlt color="#333" size={18} /> Visualizar
-              </CardAction>
-            </CardActions>
-          </Card>
-        ))}
+              <CardActions>
+                <CardAction onClick={() => handleViewPage(page.id)}>
+                  <FaEdit color="#333" size={18} /> Editar
+                </CardAction>
+                <CardAction onClick={() => openLink(page.id)}>
+                  <FaExternalLinkAlt color="#333" size={18} /> Visualizar
+                </CardAction>
+              </CardActions>
+            </Card>
+          ))}
 
-        <NewPageButton onClick={handleNewPage}>
-          <FontAwesomeIcon.FaPlus /> Criar nova página
-        </NewPageButton>
-      </Container>
-    </Shell>
+          <NewPageButton onClick={handleNewPage}>
+            <FontAwesomeIcon.FaPlus /> Criar nova página
+          </NewPageButton>
+        </Container>
+      </Shell>
+
+      <Switch>
+        <Route path="/p/newPage" component={CreatePagePage} />
+      </Switch>
+    </>
   );
 }
 
@@ -125,7 +135,7 @@ const NewPageButton = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #3a3a3a;
+  color: #262626;
   font-size: 1em;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -151,6 +161,9 @@ const Card = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const CardHeader = styled.header`
@@ -212,6 +225,7 @@ const SocialButtonCarousel = styled.div`
   overflow-x: auto;
   display: flex;
   padding: 0 0.5em;
+  flex: 0 0 auto;
 
   &::-webkit-scrollbar {
     display: none;
@@ -266,14 +280,18 @@ const SocialButtonLabel = styled.span`
   padding-top: 0.5em;
 `;
 
+const InstagramMosaicWrapper = styled.div`
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 auto;
+`;
+
 const InstagramMosaic = styled.div`
   display: grid;
-  position: relative;
   width: 100%;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 0.2em;
   margin-top: 0.5em;
-  max-height: 200px;
   overflow: hidden;
 
   &:after {
@@ -281,7 +299,8 @@ const InstagramMosaic = styled.div`
     position: absolute;
     width: 100%;
     height: 100px;
-    top: 100px;
+    bottom: 0;
+    left: 0;
     background: linear-gradient(transparent, white);
   }
 `;
