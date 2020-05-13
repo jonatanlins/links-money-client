@@ -9,16 +9,20 @@ import Button from "../components/Button";
 import Link from "../components/Link";
 
 function Page({ history }) {
-  const [formState, { email, password }] = useFormState();
+  const [formState, { text, email, password }] = useFormState();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    const data = formState.values;
+
     api
-      .post("sessions", formState.values)
+      .post("users", data)
       .then((response) => {
-        if (response.status === 401) {
-          alert("Usuário ou senha incorretos, tente novamente");
+        if (response.status >= 400) {
+          alert(
+            "Já existe um cadastro para o email informado, tente fazer login"
+          );
         } else {
           login(response.data);
 
@@ -26,23 +30,22 @@ function Page({ history }) {
         }
       })
       .catch((error) => {
-        alert("Ocorreu um erro ao fazer login, tente novamente");
+        alert("Ocorreu um erro ao cadastrar-se, tente novamente");
       });
   };
 
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
-        <Title>Entrar no LinksMoney</Title>
+        <Title>Cadastre-se no LinksMoney</Title>
 
+        <TextInput label="Nome" required {...text("name")} />
         <TextInput label="Endereço de email" required {...email("email")} />
         <TextInput label="Senha" required {...password("password")} />
 
-        <Button>Entrar</Button>
+        <Button>Cadastrar-se</Button>
 
-        <Link to="">Esqueceu a senha?</Link>
-        <br />
-        <Link to="/p/signup">Não tem uma conta? Cadastre-se</Link>
+        <Link to="/p/signin">Já tem uma conta? Faça login</Link>
       </Form>
     </Container>
   );

@@ -34,8 +34,8 @@ function Page() {
           >
             Preços
           </HeaderButton>
-          <HeaderButton to="/login">Entre</HeaderButton>
-          <MainHeaderButton to="/login">Cadastre-se</MainHeaderButton>
+          <HeaderButton to="/p/signin">Entre</HeaderButton>
+          <MainHeaderButton to="/p/signup">Cadastre-se</MainHeaderButton>
         </nav>
       </Header>
 
@@ -46,7 +46,7 @@ function Page() {
         <div className="content">
           <H1>Título</H1>
           <H2>Subtítulo</H2>
-          <Button to="/login">Comece a Usar Agora</Button>
+          <Button to="/p/signup">Comece a Usar Agora</Button>
         </div>
       </FirstSection>
 
@@ -160,7 +160,7 @@ function Page() {
 
       <FeaturedSection>
         <H3>Chamada para ação</H3>
-        <Button to="/login">Comece Agora</Button>
+        <Button to="/p/signup">Comece Agora</Button>
       </FeaturedSection>
 
       <Footer>
