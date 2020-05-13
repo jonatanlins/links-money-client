@@ -7,7 +7,6 @@ import Register from "./pages/Register";
 import Overview from "./pages/Overview";
 import ViewPage from "./pages/ViewPage";
 import CreatePage from "./pages/CreatePage";
-import CreateSocialButton from "./pages/CreateSocialButton";
 import MosaicPage from "./pages/Mosaic";
 import LandingPage from "./pages/LandingPage";
 

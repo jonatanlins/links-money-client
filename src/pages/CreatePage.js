@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import api from "../services/api";
 import axios from "axios";
-import * as FontAwesomeIcon from "react-icons/fa";
 import { getUser } from "../services/auth";
 
 import Shell from "../components/Shell";
