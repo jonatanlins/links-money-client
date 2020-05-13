@@ -9,6 +9,7 @@ import axios from "axios";
 import Shell from "../components/Shell";
 
 import CreateSocialButtonPage from "./CreateSocialButton";
+import EditSocialButtonPage from "./EditSocialButton";
 import EditPostLinkPage from "./EditPostLink";
 
 function Page({ history, match }) {
@@ -25,6 +26,10 @@ function Page({ history, match }) {
   const handleEditLink = (post) => {
     history.push(`/p/pages/${match.params.id}/postlinks/${post.id}`);
   };
+
+  function handleEditSocialButton(button) {
+    history.push(`/p/pages/${match.params.id}/socialButtons/${button.id}`);
+  }
 
   const fetchData = () => {
     const instagramId = match.params.id;
@@ -80,17 +85,20 @@ function Page({ history, match }) {
                 <SocialButtonLabel>Novo link</SocialButtonLabel>
               </SocialButton>
 
-              {pageData.socialButtons.map((item) => {
-                const Icon = FontAwesomeIcon[item.icon];
+              {pageData.socialButtons.map((button) => {
+                const Icon = FontAwesomeIcon[button.icon];
 
                 return (
-                  <SocialButton key={item.id}>
+                  <SocialButton
+                    key={button.id}
+                    onClick={() => handleEditSocialButton(button)}
+                  >
                     <SocialButtonIconWrapper
-                      background={item.gradient || item.color}
+                      background={button.gradient || button.color}
                     >
                       <Icon />
                     </SocialButtonIconWrapper>
-                    <SocialButtonLabel>{item.label}</SocialButtonLabel>
+                    <SocialButtonLabel>{button.label}</SocialButtonLabel>
                   </SocialButton>
                 );
               })}
@@ -116,6 +124,11 @@ function Page({ history, match }) {
           path="/p/pages/:id/socialButtons/new"
           exact
           component={CreateSocialButtonPage}
+        />
+        <Route
+          path="/p/pages/:id/socialButtons/:buttonId"
+          exact
+          component={EditSocialButtonPage}
         />
         <Route
           path="/p/pages/:id/postlinks/:postId"
