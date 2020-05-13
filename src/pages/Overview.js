@@ -92,13 +92,15 @@ function Page({ history }) {
                 })}
               </SocialButtonCarousel>
 
-              <InstagramMosaic>
-                {page.timeline?.map((post) => (
-                  <SquareMosaicButton key={post.id} image={post.thumbnail}>
-                    {post.link && <FontAwesomeIcon.FaLink />}
-                  </SquareMosaicButton>
-                ))}
-              </InstagramMosaic>
+              <InstagramMosaicWrapper>
+                <InstagramMosaic>
+                  {page.timeline?.map((post) => (
+                    <SquareMosaicButton key={post.id} image={post.thumbnail}>
+                      {post.link && <FontAwesomeIcon.FaLink />}
+                    </SquareMosaicButton>
+                  ))}
+                </InstagramMosaic>
+              </InstagramMosaicWrapper>
 
               <CardActions>
                 <CardAction onClick={() => handleViewPage(page.id)}>
@@ -133,7 +135,7 @@ const NewPageButton = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #3a3a3a;
+  color: #262626;
   font-size: 1em;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -159,6 +161,9 @@ const Card = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const CardHeader = styled.header`
@@ -220,6 +225,7 @@ const SocialButtonCarousel = styled.div`
   overflow-x: auto;
   display: flex;
   padding: 0 0.5em;
+  flex: 0 0 auto;
 
   &::-webkit-scrollbar {
     display: none;
@@ -274,14 +280,18 @@ const SocialButtonLabel = styled.span`
   padding-top: 0.5em;
 `;
 
+const InstagramMosaicWrapper = styled.div`
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 auto;
+`;
+
 const InstagramMosaic = styled.div`
   display: grid;
-  position: relative;
   width: 100%;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 0.2em;
   margin-top: 0.5em;
-  max-height: 200px;
   overflow: hidden;
 
   &:after {
@@ -289,7 +299,8 @@ const InstagramMosaic = styled.div`
     position: absolute;
     width: 100%;
     height: 100px;
-    top: 100px;
+    bottom: 0;
+    left: 0;
     background: linear-gradient(transparent, white);
   }
 `;

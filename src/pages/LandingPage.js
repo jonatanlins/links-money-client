@@ -207,7 +207,7 @@ const Card = styled.div`
     text-align: center;
     text-transform: uppercase;
     font-weight: 500;
-    color: #3a3a3a;
+    color: #262626;
     margin-bottom: 1.5em;
   }
 
@@ -269,12 +269,12 @@ const TitleButton = styled(Link)`
   text-decoration: none;
   line-height: 3.5em;
   font-size: 1.4em;
-  color: #3a3a3a;
+  color: #262626;
   cursor: pointer;
 `;
 
 const HeaderButton = styled(Link)`
-  color: #3a3a3a;
+  color: #262626;
   cursor: pointer;
   line-height: 5em;
   text-decoration: none;
@@ -343,7 +343,7 @@ const FeaturedSection = styled(Section)`
 `;
 
 const H1 = styled.h1`
-  color: #3a3a3a;
+  color: #262626;
   font-size: 2em;
   margin: 0.1em 0;
 
@@ -364,7 +364,7 @@ const H2 = styled.h2`
 `;
 
 const H3 = styled.h3`
-  color: #3a3a3a;
+  color: #262626;
   font-size: 2.5em;
   text-align: center;
   margin: 0.1em 0;
@@ -379,7 +379,7 @@ const H4 = styled.h4`
 `;
 
 const H5 = styled.h5`
-  color: #3a3a3a;
+  color: #262626;
   font-size: 1.25em;
   margin: 0.5em 0;
 `;
