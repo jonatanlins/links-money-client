@@ -5,7 +5,7 @@ import { isAuthenticated } from "./services/auth";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Overview from "./pages/Overview";
-import EditPage from "./pages/EditPage";
+import ViewPage from "./pages/ViewPage";
 import CreatePage from "./pages/CreatePage";
 import CreateSocialButton from "./pages/CreateSocialButton";
 import MosaicPage from "./pages/Mosaic";
@@ -41,13 +41,8 @@ function ControlPanel() {
   return (
     <Switch>
       <Route path="/p" exact component={Overview} />
-      <Route path="/p/pages/new" exact component={CreatePage} />
-      <Route path="/p/pages/:id/edit" exact component={EditPage} />
-      <Route
-        path="/p/pages/:id/socialButtons/new"
-        exact
-        component={CreateSocialButton}
-      />
+      <Route path="/p/pages/new" component={CreatePage} />
+      <Route path="/p/pages/:id" component={ViewPage} />
 
       <Redirect path="*" to="/p" />
     </Switch>
@@ -57,12 +52,13 @@ function ControlPanel() {
 function Routes() {
   return (
     <Switch>
-      <Route path="/p/signin" exact component={Login} />
-      <Route path="/p/signup" exact component={Register} />
+      <Route path="/" exact component={LandingPage} />
+
+      <Route path="/p/signin" component={Login} />
+      <Route path="/p/signup" component={Register} />
       <PrivateRoute path="/p" component={ControlPanel} />
 
-      <Route path="/" exact component={LandingPage} />
-      <Route path="/:id" exact component={MosaicPage} />
+      <Route path="/:id" component={MosaicPage} />
 
       <Redirect path="*" to="/" />
     </Switch>

@@ -52,8 +52,8 @@ function Page({ history }) {
     history.push(`/${id}`);
   };
 
-  const handleEdit = (id) => {
-    history.push(`/p/pages/${id}/edit`);
+  const handleViewPage = (id) => {
+    history.push(`/p/pages/${id}`);
   };
 
   const handleNewPage = () => {
@@ -98,7 +98,7 @@ function Page({ history }) {
             </InstagramMosaic>
 
             <CardActions>
-              <CardAction onClick={() => handleEdit(page.id)}>
+              <CardAction onClick={() => handleViewPage(page.id)}>
                 <FaEdit color="#333" size={18} /> Editar
               </CardAction>
               <CardAction onClick={() => openLink(page.id)}>

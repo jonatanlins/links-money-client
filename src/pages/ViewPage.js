@@ -3,11 +3,14 @@ import styled from "styled-components";
 import api from "../services/api";
 import { FaExternalLinkAlt, FaTimes } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
+import { Switch, Route } from "react-router-dom";
 import axios from "axios";
 
 import Shell from "../components/Shell";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
+
+import CreateSocialButtonPage from "./CreateSocialButton";
 
 function Page({ history, match }) {
   const [pageData, setPageData] = React.useState(null);
@@ -90,82 +93,92 @@ function Page({ history, match }) {
   React.useEffect(fetchData, []);
 
   return (
-    <Shell>
-      {pageData && (
-        <Container>
-          <Header>
-            <Avatar src={pageData.avatar} alt="" />
-            <Title>{pageData.name}</Title>
-            <Description>{pageData.description}</Description>
+    <>
+      <Shell>
+        {pageData && (
+          <Container>
+            <Header>
+              <Avatar src={pageData.avatar} alt="" />
+              <Title>{pageData.name}</Title>
+              <Description>{pageData.description}</Description>
 
-            <HeaderAtions>
-              <HeaderAction onClick={() => openLink(pageData.id)}>
-                <FaExternalLinkAlt color="#333" size={18} /> Visualizar
-              </HeaderAction>
-            </HeaderAtions>
-          </Header>
+              <HeaderAtions>
+                <HeaderAction onClick={() => openLink(pageData.id)}>
+                  <FaExternalLinkAlt color="#333" size={18} /> Visualizar
+                </HeaderAction>
+              </HeaderAtions>
+            </Header>
 
-          <SocialButtonCarousel>
-            <SocialButton onClick={handleNewSocialButton}>
-              <SocialButtonIconWrapper background="#ccc">
-                <FontAwesomeIcon.FaPlus />
-              </SocialButtonIconWrapper>
-              <SocialButtonLabel>Novo link</SocialButtonLabel>
-            </SocialButton>
+            <SocialButtonCarousel>
+              <SocialButton onClick={handleNewSocialButton}>
+                <SocialButtonIconWrapper background="#ccc">
+                  <FontAwesomeIcon.FaPlus />
+                </SocialButtonIconWrapper>
+                <SocialButtonLabel>Novo link</SocialButtonLabel>
+              </SocialButton>
 
-            {pageData.socialButtons.map((item) => {
-              const Icon = FontAwesomeIcon[item.icon];
+              {pageData.socialButtons.map((item) => {
+                const Icon = FontAwesomeIcon[item.icon];
 
-              return (
-                <SocialButton key={item.id}>
-                  <SocialButtonIconWrapper
-                    background={item.gradient || item.color}
-                  >
-                    <Icon />
-                  </SocialButtonIconWrapper>
-                  <SocialButtonLabel>{item.label}</SocialButtonLabel>
-                </SocialButton>
-              );
-            })}
-          </SocialButtonCarousel>
+                return (
+                  <SocialButton key={item.id}>
+                    <SocialButtonIconWrapper
+                      background={item.gradient || item.color}
+                    >
+                      <Icon />
+                    </SocialButtonIconWrapper>
+                    <SocialButtonLabel>{item.label}</SocialButtonLabel>
+                  </SocialButton>
+                );
+              })}
+            </SocialButtonCarousel>
 
-          <InstagramMosaic>
-            {pageData?.timeline?.map((post) => (
-              <SquareMosaicButton
-                key={post.id}
-                image={post.thumbnail}
-                onClick={() => handleEditLink(post)}
-              >
-                {post.link && <FontAwesomeIcon.FaLink />}
-              </SquareMosaicButton>
-            ))}
-          </InstagramMosaic>
+            <InstagramMosaic>
+              {pageData?.timeline?.map((post) => (
+                <SquareMosaicButton
+                  key={post.id}
+                  image={post.thumbnail}
+                  onClick={() => handleEditLink(post)}
+                >
+                  {post.link && <FontAwesomeIcon.FaLink />}
+                </SquareMosaicButton>
+              ))}
+            </InstagramMosaic>
 
-          {linkPopup && (
-            <LinkPopupOverlay>
-              <LinkPopup>
-                <LinkPopupCloseButton onClick={() => setLinkPopup(null)}>
-                  <FaTimes />
-                </LinkPopupCloseButton>
+            {linkPopup && (
+              <LinkPopupOverlay>
+                <LinkPopup>
+                  <LinkPopupCloseButton onClick={() => setLinkPopup(null)}>
+                    <FaTimes />
+                  </LinkPopupCloseButton>
 
-                <img src={linkPopup.thumbnail} width="200" />
+                  <img src={linkPopup.thumbnail} width="200" />
 
-                <form onSubmit={handleSaveLink}>
-                  <TextInput
-                    label="Link"
-                    value={formState.link}
-                    onChange={handleInputChange("link")}
-                    required
-                  />
+                  <form onSubmit={handleSaveLink}>
+                    <TextInput
+                      label="Link"
+                      value={formState.link}
+                      onChange={handleInputChange("link")}
+                      required
+                    />
 
-                  <Button>Salvar</Button>
-                </form>
-              </LinkPopup>
-            </LinkPopupOverlay>
-          )}
-        </Container>
-      )}
-    </Shell>
+                    <Button>Salvar</Button>
+                  </form>
+                </LinkPopup>
+              </LinkPopupOverlay>
+            )}
+          </Container>
+        )}
+      </Shell>
+
+      <Switch>
+        <Route
+          path="/p/pages/:id/socialButtons/new"
+          exact
+          component={CreateSocialButtonPage}
+        />
+      </Switch>
+    </>
   );
 }
 

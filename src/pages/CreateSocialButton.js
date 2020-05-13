@@ -4,8 +4,10 @@ import api from "../services/api";
 import axios from "axios";
 import * as FontAwesomeIcon from "react-icons/fa";
 import { getUser } from "../services/auth";
+import { CirclePicker } from "react-color";
+import { useFormState } from "react-use-form-state";
 
-import Shell from "../components/Shell";
+import Overlay from "../components/Overlay";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
 
@@ -69,61 +71,46 @@ const preDefinedButtons = [
 ];
 
 function Page({ history, match }) {
-  const [formState, setFormState] = React.useState({});
-  const [buttonStyle, setButtonStyle] = React.useState(null);
+  const [formState, { text }] = useFormState();
 
   const handleButtonSelection = (button) => {
-    setButtonStyle(button);
-    setFormState((state) => ({ ...state, label: button.label }));
-  };
-
-  const handleInputChange = (field) => (event) => {
-    const { value } = event.target;
-    setFormState((state) => ({ ...state, [field]: value }));
+    formState.setField("gradient", button.gradient);
+    formState.setField("label", button.label);
+    formState.setField("icon", button.icon);
+    formState.setField("color", button.color);
   };
 
   const handleSave = (event) => {
     event.preventDefault();
 
-    if (!buttonStyle) {
-      alert("Selecione um estilo de botão para continuar");
+    const { icon, color, label, link, gradient } = formState.values;
+    const page_id = match.params.id;
+
+    if (!icon) {
+      alert("Selecione um ícone para continuar");
+      return;
+    }
+    if (!color) {
+      alert("Selecione uma cor para continuar");
       return;
     }
 
-    const data = {
-      ...buttonStyle,
-      label: formState.label,
-      link: formState.link,
-      page_id: match.params.id,
-    };
+    const data = { icon, color, label, link, gradient, page_id };
 
     api.post("social-buttons", data).then((response) => {
-      alert("Botão criado com sucesso!");
+      alert("Link criado com sucesso!");
 
       history.push(`/p/pages/${match.params.id}/edit`);
     });
   };
 
+  const SelectedIcon = FontAwesomeIcon?.[formState.values.icon];
+
   return (
-    <Shell>
+    <Overlay>
       <Container>
         <form onSubmit={handleSave}>
-          <TextInput
-            label="Título"
-            value={formState.label}
-            onChange={handleInputChange("label")}
-            required
-          />
-
-          <TextInput
-            label="Link"
-            value={formState.link}
-            onChange={handleInputChange("link")}
-            required
-          />
-
-          <h3>Estilo</h3>
-
+          <h3>Ícone</h3>
           <SocialButtonCarousel>
             {preDefinedButtons.map((button) => {
               const Icon = FontAwesomeIcon[button.icon];
@@ -133,7 +120,6 @@ function Page({ history, match }) {
                   type="button"
                   key={button.id}
                   onClick={() => handleButtonSelection(button)}
-                  selected={buttonStyle?.id === button.id}
                 >
                   <SocialButtonIconWrapper
                     background={button.gradient || button.color}
@@ -146,10 +132,29 @@ function Page({ history, match }) {
             })}
           </SocialButtonCarousel>
 
+          <h3>Informações</h3>
+          <TextInput label="Título" required {...text("label")} />
+          <TextInput label="Link" required {...text("link")} />
+
+          <h3>Cor</h3>
+          <CirclePicker
+            onChange={(color) => formState.setField("color", color.hex)}
+          />
+
+          <h3>Pré visualização</h3>
+          <SocialButton type="button">
+            <SocialButtonIconWrapper
+              background={formState.values.gradient || formState.values.color}
+            >
+              {SelectedIcon && <SelectedIcon />}
+            </SocialButtonIconWrapper>
+            <SocialButtonLabel>{formState.values.label}</SocialButtonLabel>
+          </SocialButton>
+
           <Button>Criar link</Button>
         </form>
       </Container>
-    </Shell>
+    </Overlay>
   );
 }
 
