@@ -4,8 +4,10 @@ import api from "../services/api";
 import { FaEdit, FaExternalLinkAlt } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
 import axios from "axios";
+import { Switch, Route } from "react-router-dom";
 
 import Shell from "../components/Shell";
+import CreatePagePage from "../pages/CreatePage";
 
 function Page({ history }) {
   const [pages, setPages] = React.useState([]);
@@ -57,62 +59,68 @@ function Page({ history }) {
   };
 
   const handleNewPage = () => {
-    history.push(`/p/pages/new`);
+    history.push(`/p/newPage`);
   };
 
   React.useEffect(fetchData, []);
 
   return (
-    <Shell>
-      <Container>
-        {pages.map((page) => (
-          <Card key={page.id}>
-            <CardHeader>
-              <Avatar src={page.avatar} alt="" />
-              <CardTitle>{page.name}</CardTitle>
-              <CardDescription>{page.description}</CardDescription>
-            </CardHeader>
-            <SocialButtonCarousel>
-              {page.socialButtons.map((item) => {
-                const Icon = FontAwesomeIcon[item.icon];
+    <>
+      <Shell>
+        <Container>
+          {pages.map((page) => (
+            <Card key={page.id}>
+              <CardHeader>
+                <Avatar src={page.avatar} alt="" />
+                <CardTitle>{page.name}</CardTitle>
+                <CardDescription>{page.description}</CardDescription>
+              </CardHeader>
+              <SocialButtonCarousel>
+                {page.socialButtons.map((item) => {
+                  const Icon = FontAwesomeIcon[item.icon];
 
-                return (
-                  <SocialButton key={item.id}>
-                    <SocialButtonIconWrapper
-                      background={item.gradient || item.color}
-                    >
-                      <Icon />
-                    </SocialButtonIconWrapper>
-                    <SocialButtonLabel>{item.label}</SocialButtonLabel>
-                  </SocialButton>
-                );
-              })}
-            </SocialButtonCarousel>
+                  return (
+                    <SocialButton key={item.id}>
+                      <SocialButtonIconWrapper
+                        background={item.gradient || item.color}
+                      >
+                        <Icon />
+                      </SocialButtonIconWrapper>
+                      <SocialButtonLabel>{item.label}</SocialButtonLabel>
+                    </SocialButton>
+                  );
+                })}
+              </SocialButtonCarousel>
 
-            <InstagramMosaic>
-              {page.timeline?.map((post) => (
-                <SquareMosaicButton key={post.id} image={post.thumbnail}>
-                  {post.link && <FontAwesomeIcon.FaLink />}
-                </SquareMosaicButton>
-              ))}
-            </InstagramMosaic>
+              <InstagramMosaic>
+                {page.timeline?.map((post) => (
+                  <SquareMosaicButton key={post.id} image={post.thumbnail}>
+                    {post.link && <FontAwesomeIcon.FaLink />}
+                  </SquareMosaicButton>
+                ))}
+              </InstagramMosaic>
 
-            <CardActions>
-              <CardAction onClick={() => handleViewPage(page.id)}>
-                <FaEdit color="#333" size={18} /> Editar
-              </CardAction>
-              <CardAction onClick={() => openLink(page.id)}>
-                <FaExternalLinkAlt color="#333" size={18} /> Visualizar
-              </CardAction>
-            </CardActions>
-          </Card>
-        ))}
+              <CardActions>
+                <CardAction onClick={() => handleViewPage(page.id)}>
+                  <FaEdit color="#333" size={18} /> Editar
+                </CardAction>
+                <CardAction onClick={() => openLink(page.id)}>
+                  <FaExternalLinkAlt color="#333" size={18} /> Visualizar
+                </CardAction>
+              </CardActions>
+            </Card>
+          ))}
 
-        <NewPageButton onClick={handleNewPage}>
-          <FontAwesomeIcon.FaPlus /> Criar nova página
-        </NewPageButton>
-      </Container>
-    </Shell>
+          <NewPageButton onClick={handleNewPage}>
+            <FontAwesomeIcon.FaPlus /> Criar nova página
+          </NewPageButton>
+        </Container>
+      </Shell>
+
+      <Switch>
+        <Route path="/p/newPage" component={CreatePagePage} />
+      </Switch>
+    </>
   );
 }
 

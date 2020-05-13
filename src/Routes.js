@@ -40,7 +40,7 @@ function ControlPanel() {
   return (
     <Switch>
       <Route path="/p" exact component={Overview} />
-      <Route path="/p/pages/new" component={CreatePage} />
+      <Route path="/p/newPage" exact component={Overview} />
       <Route path="/p/pages/:id" component={ViewPage} />
 
       <Redirect path="*" to="/p" />

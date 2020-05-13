@@ -3,19 +3,15 @@ import styled from "styled-components";
 import api from "../services/api";
 import axios from "axios";
 import { getUser } from "../services/auth";
+import { useFormState } from "react-use-form-state";
 
-import Shell from "../components/Shell";
+import Overlay from "../components/Overlay";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
 
 function Page({ history }) {
-  const [formState, setFormState] = React.useState({ id: "forbesbr" });
+  const [formState, { text }] = useFormState({ id: "forbesbr" });
   const [pageData, setPageData] = React.useState(null);
-
-  const handleInputChange = (field) => (event) => {
-    const { value } = event.target;
-    setFormState((state) => ({ ...state, [field]: value }));
-  };
 
   const handleSave = () => {
     const { user } = getUser();
@@ -36,7 +32,7 @@ function Page({ history }) {
   const fetchInstagramData = (event) => {
     event.preventDefault();
     axios
-      .get(`https://www.instagram.com/${formState.id}/?__a=1`)
+      .get(`https://www.instagram.com/${formState.values.id}/?__a=1`)
       .then((response) => {
         const name = response.data.graphql.user.full_name;
         const description = response.data.graphql.user.biography;
@@ -50,31 +46,25 @@ function Page({ history }) {
   };
 
   return (
-    <Shell>
-      <Container>
-        <form onSubmit={fetchInstagramData}>
-          <TextInput
-            label="Nome de usuário"
-            value={formState.id}
-            onChange={handleInputChange("id")}
-            required
-          />
-          <Button>Pesquisar instagram</Button>
-        </form>
+    <Overlay>
+      <form onSubmit={fetchInstagramData}>
+        <TextInput label="Nome de usuário" required {...text("id")} />
 
-        {pageData && (
-          <>
-            <InstagramHeader>
-              <Avatar src={pageData.avatar} alt="" />
-              <Title>{pageData.name}</Title>
-              <Description>{pageData.description}</Description>
-            </InstagramHeader>
+        <Button>Pesquisar instagram</Button>
+      </form>
 
-            <Button onClick={handleSave}>Criar página</Button>
-          </>
-        )}
-      </Container>
-    </Shell>
+      {pageData && (
+        <>
+          <InstagramHeader>
+            <Avatar src={pageData.avatar} alt="" />
+            <Title>{pageData.name}</Title>
+            <Description>{pageData.description}</Description>
+          </InstagramHeader>
+
+          <Button onClick={handleSave}>Criar página</Button>
+        </>
+      )}
+    </Overlay>
   );
 }
 

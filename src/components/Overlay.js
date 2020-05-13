@@ -52,7 +52,7 @@ const Container = styled.div`
   background-color: white;
   border-radius: 1em;
   box-sizing: border-box;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 `;
 
 const CloseButton = styled.button`
