@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getUser } from "./auth";
 
-const baseURL = "http://594d97eb.ngrok.io";
+const baseURL = "https://links-money-server.herokuapp.com/";
 
 const api = axios.create({ baseURL });
 
