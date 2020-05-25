@@ -7,6 +7,7 @@ import { Switch, Route } from "react-router-dom";
 import axios from "axios";
 
 import Shell from "../components/Shell";
+import InstagramMosaic from "../components/InstagramMosaic";
 
 import CreateSocialButtonPage from "./CreateSocialButton";
 import EditSocialButtonPage from "./EditSocialButton";
@@ -35,26 +36,6 @@ function Page({ history, match }) {
     const instagramId = match.params.id;
     api.get(`pages/${instagramId}`).then((response) => {
       setPageData(response.data);
-
-      axios
-        .get(`https://www.instagram.com/${instagramId}/?__a=1`)
-        .then((response) => {
-          const timeline = response.data.graphql.user.edge_owner_to_timeline_media.edges.map(
-            (item) => item.node
-          );
-
-          setPageData((pageData) => ({
-            ...pageData,
-            timeline: timeline.map((post) => {
-              return {
-                thumbnail: post.thumbnail_src,
-                id: post.id,
-                link: pageData.links.find((link) => link.social_id === post.id)
-                  ?.link,
-              };
-            }),
-          }));
-        });
     });
   };
 
@@ -104,17 +85,7 @@ function Page({ history, match }) {
               })}
             </SocialButtonCarousel>
 
-            <InstagramMosaic>
-              {pageData?.timeline?.map((post) => (
-                <SquareMosaicButton
-                  key={post.id}
-                  image={post.thumbnail}
-                  onClick={() => handleEditLink(post)}
-                >
-                  {post.link && <FontAwesomeIcon.FaLink />}
-                </SquareMosaicButton>
-              ))}
-            </InstagramMosaic>
+            <InstagramMosaic posts={pageData.posts} onClick={handleEditLink} />
           </Container>
         )}
       </Shell>
@@ -262,35 +233,6 @@ const SocialButtonLabel = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   padding-top: 0.5em;
-`;
-
-const InstagramMosaic = styled.div`
-  display: grid;
-  position: relative;
-  width: 100%;
-  grid-template-columns: repeat(6, 1fr);
-  grid-gap: 0.2em;
-  margin-top: 0.5em;
-`;
-
-const SquareMosaicButton = styled.button`
-  background: center url(${(props) => props.image}) no-repeat;
-  background-size: cover;
-  width: 100%;
-  padding-bottom: 100%;
-  border: none;
-  display: block;
-  outline: none;
-  cursor: pointer;
-  position: relative;
-
-  svg {
-    color: white;
-    position: absolute;
-    right: 8px;
-    top: 8px;
-    font-size: 20px;
-  }
 `;
 
 export default Page;

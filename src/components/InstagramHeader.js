@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-function Component({ avatar, id, description }) {
+function Component({ avatar, username, description }) {
   return (
     <Container>
       <Avatar src={avatar} alt="" />
-      <Title>{id}</Title>
+      <Title>{username}</Title>
       <Description>{description}</Description>
     </Container>
   );

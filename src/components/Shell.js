@@ -91,7 +91,6 @@ const HeaderWrapper = styled.div`
 
 const Header = styled.header`
   display: flex;
-  width: 100%;
   max-width: 975px;
   padding: 0 20px;
   height: 54px;
@@ -138,6 +137,7 @@ const Content = styled.main`
   width: 100%;
   max-width: 975px;
   margin: 0 auto;
+  box-sizing: border-box;
 `;
 
 export default Shell;

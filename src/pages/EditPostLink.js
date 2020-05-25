@@ -12,46 +12,38 @@ function Page({ history, match }) {
   const [post, setPost] = React.useState({});
 
   function fetchPost() {
-    axios
-      .get(`https://www.instagram.com/${match.params.id}/?__a=1`)
-      .then((response) => {
-        const user = response.data.graphql.user;
-        const timeline = user.edge_owner_to_timeline_media.edges;
-        const post = timeline.find(
-          (post) => post.node.id === match.params.postId
-        ).node;
+    api.get(`/pages/${match.params.id}`).then((response) => {
+      const post = response.data.posts.find(
+        (post) => post.id.toString() === match.params.postId
+      );
 
-        setPost(post);
-
-        api.get("links").then((response) => {
-          const link =
-            response.data.find((post) => post.social_id === match.params.postId)
-              ?.link || "";
-
-          formState.setField("link", link);
-        });
-      });
+      if (post) {
+        console.log(post);
+      } else {
+        history.push(`/p/pages/${match.params.id}`);
+        console.log(response.data.posts);
+      }
+    });
   }
 
   const handleSaveLink = (event) => {
     event.preventDefault();
 
     const linkData = {
-      page_id: match.params.id,
-      social_id: match.params.postId,
+      id: match.params.postId,
       link: formState.values.link,
-      type: "instagram",
     };
 
-    api.post("links", linkData).then((response) => {
-      if (response.status < 400) {
+    api
+      .put("posts", linkData)
+      .then(() => {
         alert("Link definido com sucesso!");
 
         history.goBack();
-      } else {
+      })
+      .catch(() => {
         alert("Ocorreu um erro, por favor tente novamente");
-      }
-    });
+      });
   };
 
   React.useEffect(fetchPost, []);

@@ -1,16 +1,18 @@
-import apisauce from "apisauce";
+import axios from "axios";
 import { getUser } from "./auth";
 
-const baseURL = "https://links-money-server.herokuapp.com";
+const baseURL = "http://594d97eb.ngrok.io";
 
-const api = apisauce.create({ baseURL });
+const api = axios.create({ baseURL });
 
-api.addRequestTransform((request) => {
+api.interceptors.request.use(async (request) => {
   const auth = getUser();
 
   if (auth?.session?.token) {
-    request.headers.authorization = `Bearer ${auth.session.token}`;
+    request.headers.Authorization = `Bearer ${auth.session.token}`;
   }
+
+  return request;
 });
 
 export default api;

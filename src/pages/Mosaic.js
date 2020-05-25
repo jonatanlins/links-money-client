@@ -2,7 +2,6 @@ import React from "react";
 import api from "../services/api";
 import styled, { css } from "styled-components";
 import YoutubeMosaicButton from "../components/YoutubeMosaicButton";
-import axios from "axios";
 
 import InstagramHeader from "../components/InstagramHeader";
 import InstagramMosaic from "../components/InstagramMosaic";
@@ -20,35 +19,15 @@ function Page({ match }) {
     }
   };
 
-  const handleLink = (link) => {
-    if (link) {
-      window.location.href = link;
+  const handleLink = (post) => {
+    if (post.link) {
+      window.location.href = post.link;
     }
   };
 
   const fetchData = () => {
     api.get(`/pages/${match.params.id}`).then((response) => {
       setPageData(response.data);
-
-      axios
-        .get(`https://www.instagram.com/${match.params.id}/?__a=1`)
-        .then((response) => {
-          const timeline = response.data.graphql.user.edge_owner_to_timeline_media.edges.map(
-            (item) => item.node
-          );
-
-          setPageData((pageData) => ({
-            ...pageData,
-            timeline: timeline.map((post) => {
-              return {
-                thumbnail: post.thumbnail_src,
-                id: post.id,
-                link: pageData.links.find((link) => link.social_id === post.id)
-                  ?.link,
-              };
-            }),
-          }));
-        });
     });
   };
 
@@ -60,7 +39,7 @@ function Page({ match }) {
     <Container>
       <InstagramHeader
         avatar={pageData.avatar}
-        id={pageData.id}
+        username={pageData.username}
         description={pageData.description}
       />
 
@@ -72,25 +51,7 @@ function Page({ match }) {
       {layout === "instagram" && (
         <>
           <HelpText>Toque em alguma imagem para ver mais</HelpText>
-          <InstagramMosaic posts={pageData.timeline} onClick={handleLink} />
-        </>
-      )}
-
-      {layout === "youtube" && (
-        <>
-          <HelpText>Toque em algum link para ver mais</HelpText>
-
-          <YoutubeMosaic>
-            {pageData.links
-              .filter((link) => link.type === "youtube")
-              .map((item) => (
-                <YoutubeMosaicButton
-                  key={item.etag}
-                  data={item.snippet}
-                  onClick={() => handleLink(item.link)}
-                />
-              ))}
-          </YoutubeMosaic>
+          <InstagramMosaic posts={pageData.posts} onClick={handleLink} />
         </>
       )}
     </Container>

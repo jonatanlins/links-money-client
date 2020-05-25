@@ -3,126 +3,98 @@ import styled from "styled-components";
 import api from "../services/api";
 import { FaEdit, FaExternalLinkAlt } from "react-icons/fa";
 import * as FontAwesomeIcon from "react-icons/fa";
-import axios from "axios";
-import { Switch, Route } from "react-router-dom";
+import { getUser } from "../services/auth";
 
 import Shell from "../components/Shell";
-import CreatePagePage from "../pages/CreatePage";
 
 function Page({ history }) {
   const [pages, setPages] = React.useState([]);
 
   const fetchData = () => {
+    const user = getUser().user;
+
+    console.log(user);
+
     api.get("pages").then((response) => {
-      setPages(response.data);
-
-      response.data.forEach((page) => {
-        axios
-          .get(`https://www.instagram.com/${page.id}/?__a=1`)
-          .then((response) => {
-            const timeline = response.data.graphql.user.edge_owner_to_timeline_media.edges.map(
-              (item) => item.node
-            );
-            const instagramId = page.id;
-
-            setPages((pages) =>
-              pages.map((page) => {
-                if (page.id === instagramId) {
-                  return {
-                    ...page,
-                    timeline: timeline.map((post) => {
-                      return {
-                        thumbnail: post.thumbnail_src,
-                        id: post.id,
-                        link: page.links.find(
-                          (link) => link.social_id === post.id
-                        )?.link,
-                      };
-                    }),
-                  };
-                } else {
-                  return page;
-                }
-              })
-            );
-          });
-      });
+      setPages(
+        response.data.filter((page) =>
+          page.owners.some((owner) => owner.id === user.id)
+        )
+      );
     });
   };
 
-  const openLink = (id) => {
-    history.push(`/${id}`);
+  const openLink = (username) => {
+    history.push(`/${username}`);
   };
 
-  const handleViewPage = (id) => {
-    history.push(`/p/pages/${id}`);
+  const handleViewPage = (username) => {
+    history.push(`/p/pages/${username}`);
   };
 
-  const handleNewPage = () => {
-    history.push(`/p/newPage`);
-  };
+  function createNewPage() {
+    const baseURL = window.location.origin.replace("http:", "https:");
+    const redirect = `${baseURL}/p/newPage`;
+    const clientID = "267533494431261";
+    const url = `https://api.instagram.com/oauth/authorize?client_id=${clientID}&redirect_uri=${redirect}&scope=user_profile,user_media&response_type=code`;
+    window.open(url, "_self");
+  }
 
   React.useEffect(fetchData, []);
 
   return (
-    <>
-      <Shell>
-        <Container>
-          {pages.map((page) => (
-            <Card key={page.id}>
-              <CardHeader>
-                <Avatar src={page.avatar} alt="" />
-                <CardTitle>{page.name}</CardTitle>
-                <CardDescription>{page.description}</CardDescription>
-              </CardHeader>
-              <SocialButtonCarousel>
-                {page.socialButtons.map((item) => {
-                  const Icon = FontAwesomeIcon[item.icon];
+    <Shell>
+      <Container>
+        {pages.map((page) => (
+          <Card key={page.id}>
+            <CardHeader>
+              <Avatar src={page.avatar} alt="" />
+              <CardTitle>{page.name}</CardTitle>
+              <CardDescription>{page.description}</CardDescription>
+            </CardHeader>
+            <SocialButtonCarousel>
+              {page.socialButtons.map((item) => {
+                const Icon = FontAwesomeIcon?.[item.icon];
 
-                  return (
-                    <SocialButton key={item.id}>
-                      <SocialButtonIconWrapper
-                        background={item.gradient || item.color}
-                      >
-                        <Icon />
-                      </SocialButtonIconWrapper>
-                      <SocialButtonLabel>{item.label}</SocialButtonLabel>
-                    </SocialButton>
-                  );
-                })}
-              </SocialButtonCarousel>
+                return (
+                  <SocialButton key={item.id}>
+                    <SocialButtonIconWrapper
+                      background={item.gradient || item.color}
+                    >
+                      {Icon && <Icon />}
+                    </SocialButtonIconWrapper>
+                    <SocialButtonLabel>{item.label}</SocialButtonLabel>
+                  </SocialButton>
+                );
+              })}
+            </SocialButtonCarousel>
 
-              <InstagramMosaicWrapper>
-                <InstagramMosaic>
-                  {page.timeline?.map((post) => (
-                    <SquareMosaicButton key={post.id} image={post.thumbnail}>
-                      {post.link && <FontAwesomeIcon.FaLink />}
-                    </SquareMosaicButton>
-                  ))}
-                </InstagramMosaic>
-              </InstagramMosaicWrapper>
+            <InstagramMosaicWrapper>
+              <InstagramMosaic>
+                {page.posts.map((post) => (
+                  <SquareMosaicButton key={post.id} image={post.media_url}>
+                    {post.link && <FontAwesomeIcon.FaLink />}
+                  </SquareMosaicButton>
+                ))}
+              </InstagramMosaic>
+            </InstagramMosaicWrapper>
 
-              <CardActions>
-                <CardAction onClick={() => handleViewPage(page.id)}>
-                  <FaEdit color="#333" size={18} /> Editar
-                </CardAction>
-                <CardAction onClick={() => openLink(page.id)}>
-                  <FaExternalLinkAlt color="#333" size={18} /> Visualizar
-                </CardAction>
-              </CardActions>
-            </Card>
-          ))}
+            <CardActions>
+              <CardAction onClick={() => handleViewPage(page.username)}>
+                <FaEdit color="#333" size={18} /> Gerenciar
+              </CardAction>
+              <CardAction onClick={() => openLink(page.username)}>
+                <FaExternalLinkAlt color="#333" size={18} /> Visualizar
+              </CardAction>
+            </CardActions>
+          </Card>
+        ))}
 
-          <NewPageButton onClick={handleNewPage}>
-            <FontAwesomeIcon.FaPlus /> Criar nova página
-          </NewPageButton>
-        </Container>
-      </Shell>
-
-      <Switch>
-        <Route path="/p/newPage" component={CreatePagePage} />
-      </Switch>
-    </>
+        <NewPageButton onClick={createNewPage}>
+          <FontAwesomeIcon.FaPlus /> Adicionar página
+        </NewPageButton>
+      </Container>
+    </Shell>
   );
 }
 
@@ -139,6 +111,7 @@ const NewPageButton = styled.button`
   font-size: 1em;
   cursor: pointer;
   transition: background-color 0.2s;
+  min-height: 300px;
 
   svg {
     font-size: 3em;
@@ -153,17 +126,29 @@ const NewPageButton = styled.button`
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: auto;
   grid-gap: 2em;
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1000px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
 const Card = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  max-height: 600px;
+  max-height: 500px;
   display: flex;
   flex-direction: column;
+
+  @media (min-width: 600px) {
+    max-height: 600px;
+  }
 `;
 
 const CardHeader = styled.header`

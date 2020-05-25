@@ -20,6 +20,7 @@ const StyledButton = styled.button`
   margin: 0;
   box-sizing: border-box;
   position: relative;
+  cursor: pointer;
 
   svg {
     color: white;

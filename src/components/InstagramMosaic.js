@@ -10,8 +10,8 @@ function Component({ posts = [], onClick }) {
       {posts.map((post) => (
         <InstagramMosaicButton
           key={post.id}
-          image={post.thumbnail}
-          onClick={() => onClick(post.link)}
+          image={post.media_url}
+          onClick={() => onClick(post)}
         >
           {post.link && <FaLink />}
         </InstagramMosaicButton>

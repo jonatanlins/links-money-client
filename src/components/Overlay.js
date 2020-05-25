@@ -7,6 +7,7 @@ function Component({ children, parentPage }) {
   const history = useHistory();
 
   function handleClose() {
+    console.log(parentPage);
     if (parentPage) {
       history.push(parentPage);
     } else {
